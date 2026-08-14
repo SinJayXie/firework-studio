@@ -29,6 +29,9 @@ export default class Shell {
   strobeColor!: string | null
   ring!: boolean
   horsetail!: boolean
+  gravity!: number
+  fade!: number
+  launchHeight?: number
   onDeath?: (star: StarData, fw: Firework) => void
   comet!: StarData
 
@@ -37,6 +40,8 @@ export default class Shell {
     this.starLifeVariation = options.starLifeVariation || 0.125
     this.color = options.color || randomColor()
     this.glitterColor = options.glitterColor || (typeof this.color === "string" ? this.color : this.color[0])
+    this.gravity = options.gravity ?? 1
+    this.fade = options.fade ?? 1
     if (!this.starCount) {
       const density = options.starDensity || 1
       const scaledSize = this.spreadSize / 54
@@ -52,7 +57,8 @@ export default class Shell {
     const minHeight = height - height * minHeightPercent
     const launchX = position * (width - hpad * 2) + hpad
     const launchY = height
-    const burstY = minHeight - launchHeight * (minHeight - vpad)
+    const h = this.launchHeight ?? launchHeight
+    const burstY = minHeight - h * (minHeight - vpad)
     const launchDistance = launchY - burstY
     const launchVelocity = Math.pow(launchDistance * 0.04, 0.64)
 
@@ -138,6 +144,8 @@ export default class Shell {
         this.horsetail ? this.comet && this.comet.speedX : 0,
         this.horsetail ? this.comet && this.comet.speedY : -standardInitialSpeed,
       )
+      star.gravity = this.gravity
+      star.fade = this.fade
       if (this.secondColor) {
         star.transitionTime = this.starLife * (Math.random() * 0.05 + 0.32)
         star.secondColor = this.secondColor
@@ -157,6 +165,8 @@ export default class Shell {
 
     // 提取通用效果应用，供 ring 分支复用以确保全特效兼容
     const applyStarProps = (star: StarData) => {
+      star.gravity = this.gravity
+      star.fade = this.fade
       if (this.secondColor) {
         star.transitionTime = this.starLife * (Math.random() * 0.05 + 0.32)
         star.secondColor = this.secondColor

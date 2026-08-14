@@ -189,6 +189,31 @@
         </div>
       </div>
 
+      <!-- 物理 -->
+      <div class="designer-section">
+        <div class="designer-section__title">{{ t('visualDesigner.physics') }}</div>
+        <div class="designer-grid">
+          <div class="designer-field">
+            <label class="designer-label">{{ t('visualDesigner.gravity') }}</label>
+            <InputNumber v-model="form.gravity" :min="0" :max="5" :step="0.1" @change="emitCode" />
+          </div>
+          <div class="designer-field">
+            <label class="designer-label">{{ t('visualDesigner.fade') }}</label>
+            <InputNumber v-model="form.fade" :min="0" :max="2" :step="0.1" @change="emitCode" />
+          </div>
+        </div>
+        <div class="designer-field designer-field--mt">
+          <AppCheckbox :model-value="form.launchHeightAuto"
+            @update:model-value="(v: boolean) => { form.launchHeightAuto = v; emitCode() }">
+            {{ t('visualDesigner.launchHeightAuto') }}
+          </AppCheckbox>
+        </div>
+        <div v-if="!form.launchHeightAuto" class="designer-field designer-field--mt">
+          <label class="designer-label">{{ t('visualDesigner.launchHeight') }}</label>
+          <InputNumber v-model="form.launchHeight" :min="0" :max="1" :step="0.05" @change="emitCode" />
+        </div>
+      </div>
+
       <!-- onDeath -->
       <div class="designer-section">
         <div class="designer-section__title">{{ t('visualDesigner.onDeathTitle') }}</div>
@@ -287,6 +312,42 @@
                   </div>
                 </div>
               </template>
+
+              <!-- spiral -->
+              <template v-if="effect.type === 'spiral'">
+                <div class="designer-death-grid">
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.spiralCount') }}</label>
+                    <InputNumber v-model="effect.count" :min="1" :max="100" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.spiralTurns') }}</label>
+                    <InputNumber v-model="effect.turns" :min="0.1" :max="10" :step="0.5" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.spiralLife') }}</label>
+                    <InputNumber v-model="effect.life" :min="100" :max="3000" :step="50" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.spiralSpeed') }}</label>
+                    <InputNumber v-model="effect.speed" :min="0.1" :max="5" :step="0.1" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.spiralColor') }}</label>
+                    <AppSelect v-model="effect.colorMode" variant="dark" :options="[
+                      { label: t('visualDesigner.colorInherit'), value: 'inherit' },
+                      { label: t('visualDesigner.colorRandom'), value: 'random' },
+                      { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                    ]" @update:model-value="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'custom'" class="designer-field designer-field--mt">
+                  <div class="designer-color-extra__row">
+                    <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
+                    <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -296,6 +357,7 @@
           <button class="designer-death-add__btn" @click="addDeathEffect('burst')">Burst</button>
           <button class="designer-death-add__btn" @click="addDeathEffect('flash')">Flash</button>
           <button class="designer-death-add__btn" @click="addDeathEffect('arc')">Arc</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('spiral')">Spiral</button>
         </div>
       </div>
 
@@ -371,7 +433,19 @@ interface ArcDeath {
   color: string
 }
 
-type DeathEffect = BurstDeath | FlashDeath | ArcDeath
+interface SpiralDeath {
+  id: string
+  type: "spiral"
+  enabled: boolean
+  count: number
+  turns: number
+  life: number
+  speed: number
+  colorMode: DeathColorMode
+  color: string
+}
+
+type DeathEffect = BurstDeath | FlashDeath | ArcDeath | SpiralDeath
 
 function createBurstDeath(): BurstDeath {
   return { id: uid(), type: "burst", enabled: true, count: 6, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043" }
@@ -381,6 +455,9 @@ function createFlashDeath(): FlashDeath {
 }
 function createArcDeath(): ArcDeath {
   return { id: uid(), type: "arc", enabled: true, count: 6, angle: 6.283, life: 600, colorMode: "inherit", color: "#ff0043" }
+}
+function createSpiralDeath(): SpiralDeath {
+  return { id: uid(), type: "spiral", enabled: true, count: 16, turns: 1, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043" }
 }
 
 interface DesignerForm {
@@ -395,6 +472,10 @@ interface DesignerForm {
   lifeVariation: number
   density: number
   starCount: number
+  gravity: number
+  fade: number
+  launchHeight: number
+  launchHeightAuto: boolean
   glitter: boolean
   glitterType: string
   ring: boolean
@@ -424,6 +505,10 @@ function defaultForm(name = ""): DesignerForm {
     lifeVariation: 0.125,
     density: 1.0,
     starCount: 0,
+    gravity: 1,
+    fade: 1,
+    launchHeight: 0.5,
+    launchHeightAuto: true,
     glitter: false,
     glitterType: "medium",
     ring: false,
@@ -564,6 +649,11 @@ function generateBlockCode(f: DesignerForm): string {
   if (f.floral) lines.push(`${indent}floral = true`)
   if (f.fallingLeaves) lines.push(`${indent}fallingLeaves = true`)
 
+  // Physics
+  if (f.gravity !== 1) lines.push(`${indent}gravity = ${f.gravity}`)
+  if (f.fade !== 1) lines.push(`${indent}fade = ${f.fade}`)
+  if (!f.launchHeightAuto) lines.push(`${indent}launchHeight = ${f.launchHeight}`)
+
   // onDeath
   if (f.deathEffects.length > 0) {
     lines.push(``)
@@ -592,6 +682,16 @@ function generateBlockCode(f: DesignerForm): string {
         } else {
           const angleStr = effect.angle === 3.1415 ? "Math.PI" : effect.angle.toFixed(4)
           lines.push(`${dd}arc ${effect.count} (${angleStr}) { ${opts.join(", ")} }`)
+        }
+      } else if (effect.type === "spiral") {
+        const opts: string[] = []
+        opts.push(`color = ${formatActionColor(effect.colorMode, effect.color)}`)
+        if (effect.life !== 600) opts.push(`life = ${effect.life}`)
+        if (effect.speed !== 1.0) opts.push(`speed = ${effect.speed}`)
+        if (effect.turns === 1) {
+          lines.push(`${dd}spiral ${effect.count} { ${opts.join(", ")} }`)
+        } else {
+          lines.push(`${dd}spiral ${effect.count} (${effect.turns}) { ${opts.join(", ")} }`)
         }
       }
     }
@@ -623,7 +723,7 @@ function emitCode() {
   emit("update:modelValue", generatedCode.value)
 }
 
-const DEATH_TYPE_LABELS: Record<string, string> = { burst: "Burst", flash: "Flash", arc: "Arc" }
+const DEATH_TYPE_LABELS: Record<string, string> = { burst: "Burst", flash: "Flash", arc: "Arc", spiral: "Spiral" }
 function deathTypeLabel(type: string) {
   return DEATH_TYPE_LABELS[type] ?? type
 }
@@ -632,7 +732,8 @@ function addDeathEffect(type: DeathEffect["type"]) {
   let effect: DeathEffect
   if (type === "burst") effect = createBurstDeath()
   else if (type === "flash") effect = createFlashDeath()
-  else effect = createArcDeath()
+  else if (type === "arc") effect = createArcDeath()
+  else effect = createSpiralDeath()
   form.value.deathEffects.push(effect)
   emitCode()
 }
@@ -662,7 +763,7 @@ function strToArcAngle(val: string): number {
   return { full: 6.283, half: 3.1415, quarter: 1.5708 }[val] ?? 6.283
 }
 
-function parseDeathColor(raw: string, eff: BurstDeath | ArcDeath) {
+function parseDeathColor(raw: string, eff: BurstDeath | ArcDeath | SpiralDeath) {
   if (raw === "inherit") eff.colorMode = "inherit"
   else if (raw === "random") eff.colorMode = "random"
   else if (/^#[0-9a-fA-F]{6}$/.test(raw)) { eff.colorMode = "custom"; eff.color = raw }
@@ -733,6 +834,21 @@ function parseBlockCode(blockCode: string, target: DesignerForm) {
   const scMatch2 = blockCode.match(/starCount\s*=\s*(\d+)/)
   if (scMatch2) target.starCount = parseInt(scMatch2[1])
 
+  const gravityMatch = blockCode.match(/gravity\s*=\s*([\d.]+)/)
+  target.gravity = gravityMatch ? parseFloat(gravityMatch[1]) : 1
+
+  const fadeMatch = blockCode.match(/fade\s*=\s*([\d.]+)/)
+  target.fade = fadeMatch ? parseFloat(fadeMatch[1]) : 1
+
+  const lhMatch = blockCode.match(/launchHeight\s*=\s*([\d.]+)/)
+  if (lhMatch) {
+    target.launchHeight = parseFloat(lhMatch[1])
+    target.launchHeightAuto = false
+  } else {
+    target.launchHeight = 0.5
+    target.launchHeightAuto = true
+  }
+
   const boolProps = ["ring", "horsetail", "strobe", "pistil", "streamers", "crossette", "crackle", "floral", "fallingLeaves"]
   for (const prop of boolProps) {
     const m = blockCode.match(new RegExp(`${prop}\\s*=\\s*true`))
@@ -795,10 +911,10 @@ function parseBlockCode(blockCode: string, target: DesignerForm) {
         }
 
         // arc
-        for (const m of body.matchAll(/arc\s+(\d+)(?:\s*\(([\d.]+)\))?\s*\{([^}]*)\}/g)) {
+        for (const m of body.matchAll(/arc\s+(\d+)(?:\s*\(([\d.]+|Math\.PI)\))?\s*\{([^}]*)\}/g)) {
           const eff = createArcDeath()
           eff.count = parseInt(m[1])
-          if (m[2]) eff.angle = parseFloat(m[2])
+          if (m[2]) eff.angle = m[2] === "Math.PI" ? 3.1415 : parseFloat(m[2])
 
           const aOpts = m[3]
           const aLife = aOpts.match(/life\s*=\s*([\d.]+)/)
@@ -806,6 +922,24 @@ function parseBlockCode(blockCode: string, target: DesignerForm) {
 
           const aColor = aOpts.match(/color\s*=\s*(\w+|#[a-fA-F0-9]{6})/)
           if (aColor) parseDeathColor(aColor[1], eff)
+          target.deathEffects.push(eff)
+        }
+
+        // spiral
+        for (const m of body.matchAll(/spiral\s+(\d+)(?:\s*\(([\d.]+)\))?\s*\{([^}]*)\}/g)) {
+          const eff = createSpiralDeath()
+          eff.count = parseInt(m[1])
+          eff.turns = m[2] ? parseFloat(m[2]) : 1
+
+          const sOpts = m[3]
+          const sLife = sOpts.match(/life\s*=\s*([\d.]+)/)
+          if (sLife) eff.life = parseFloat(sLife[1])
+
+          const sSpeed = sOpts.match(/speed\s*=\s*([\d.]+)/)
+          if (sSpeed) eff.speed = parseFloat(sSpeed[1])
+
+          const sColor = sOpts.match(/color\s*=\s*(\w+|#[a-fA-F0-9]{6})/)
+          if (sColor) parseDeathColor(sColor[1], eff)
           target.deathEffects.push(eff)
         }
       }

@@ -24,7 +24,14 @@ export interface ArcAction {
   options: Record<string, string | number>
 }
 
-export type OnDeathAction = BurstAction | FlashAction | ArcAction
+export interface SpiralAction {
+  type: "spiral"
+  count: number
+  turns: number
+  options: Record<string, string | number>
+}
+
+export type OnDeathAction = BurstAction | FlashAction | ArcAction | SpiralAction
 
 export interface ParsedShell {
   name: string
@@ -41,7 +48,7 @@ interface Token {
   col: number
 }
 
-const KEYWORDS = new Set(["firework", "onDeath", "burst", "flash", "arc", "true", "false", "random", "inherit"])
+const KEYWORDS = new Set(["firework", "onDeath", "burst", "flash", "arc", "spiral", "true", "false", "random", "inherit"])
 
 const KNOWN_PROPS = new Set([
   "name", "size", "life", "lifeVariation", "density", "starCount",
@@ -49,6 +56,7 @@ const KNOWN_PROPS = new Set([
   "ring", "horsetail", "strobe", "strobeColor",
   "pistil", "pistilColor", "streamers",
   "crossette", "crackle", "floral", "fallingLeaves",
+  "gravity", "fade", "launchHeight",
   "speed", // burst/arc action option
 ])
 
@@ -72,6 +80,9 @@ const PROP_RANGES: Record<string, [number, number]> = {
   lifeVariation: [0, 5],
   density: [0.05, 2],
   starCount: [1, 5000],
+  gravity: [0, 5],
+  fade: [0, 2],
+  launchHeight: [0, 1],
 }
 
 const NUMERIC_PROPS = new Set(Object.keys(PROP_RANGES))
@@ -171,6 +182,15 @@ function tokenize(input: string): { tokens: Token[]; errors: ShellParseError[] }
       let word = ""
       while (i < input.length && /[a-zA-Z0-9_\u4e00-\u9fff]/.test(input[i])) {
         word += input[i]; advance()
+      }
+      // Math.PI 作为数字常量（用于 arc 弧线角度，如半圆）
+      if (word === "Math" && input.slice(i, i + 3) === ".PI") {
+        const after = input[i + 3]
+        if (after === undefined || !/[a-zA-Z0-9_\u4e00-\u9fff]/.test(after)) {
+          advance(3)
+          tokens.push({ type: "number", value: String(Math.PI), line: startLine, col: startCol })
+          continue
+        }
       }
       if (KEYWORDS.has(word)) {
         if (word === "true") tokens.push({ type: "bool", value: "true", line: startLine, col: startCol })
@@ -385,8 +405,9 @@ class Parser {
       case "burst": return this.parseBurst()
       case "flash": return this.parseFlash()
       case "arc": return this.parseArc()
+      case "spiral": return this.parseSpiral()
       default: {
-        this.errors.push({ message: `Unknown action "${t.value}", allowed: burst, flash, arc`, line: t.line, col: t.col })
+        this.errors.push({ message: `Unknown action "${t.value}", allowed: burst, flash, arc, spiral`, line: t.line, col: t.col })
         this.advance()
         return null
       }
@@ -456,6 +477,34 @@ class Parser {
       this.require("symbol", "}")
     }
     return { type: "arc", count, arcAngle, options }
+  }
+
+  private parseSpiral(): SpiralAction {
+    this.advance() // "spiral"
+    const countTok = this.require("number")
+    const count = parseFloat(countTok.value)
+    if (count <= 0) {
+      this.errors.push({ message: `spiral count must be positive, got ${count}`, line: countTok.line, col: countTok.col })
+    } else if (count > 100) {
+      this.errors.push({ message: `spiral count too high (${count}), recommended 1-100`, line: countTok.line, col: countTok.col })
+    }
+    let turns = 1
+    if (this.peek()?.value === "(") {
+      this.advance()
+      const turnsTok = this.require("number")
+      turns = parseFloat(turnsTok.value)
+      if (turns <= 0 || turns > 10) {
+        this.errors.push({ message: `spiral turns must be in range (0, 10], got ${turns}`, line: turnsTok.line, col: turnsTok.col })
+      }
+      this.require("symbol", ")")
+    }
+    const options: Record<string, string | number> = {}
+    if (this.peek()?.value === "{") {
+      this.advance()
+      this.parseOptionsBlock(options)
+      this.require("symbol", "}")
+    }
+    return { type: "spiral", count, turns, options }
   }
 
   private parseOptionsBlock(options: Record<string, string | number | boolean | string[]>): void {

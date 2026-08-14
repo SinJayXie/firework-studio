@@ -236,6 +236,7 @@ export default class Firework {
   ): StarData {
     const instance = this.starPool.pop() || ({} as StarData)
     instance.visible = true; instance.heavy = false
+    instance.gravity = 1; instance.fade = 1
     instance.x = x; instance.y = y
     instance.prevX = x; instance.prevY = y
     instance.color = color
@@ -507,9 +508,11 @@ export default class Firework {
           const burnRateInverse = 1 - burnRate
           star.prevX = star.x; star.prevY = star.y
           star.x += star.speedX * speed; star.y += star.speedY * speed
-          if (!star.heavy) { star.speedX *= starDrag; star.speedY *= starDrag }
-          else { star.speedX *= starDragHeavy; star.speedY *= starDragHeavy }
-          star.speedY += gAcc
+          const drag = star.heavy ? starDragHeavy : starDrag
+          const dragFactor = 1 - (1 - drag) * star.fade
+          star.speedX *= dragFactor
+          star.speedY *= dragFactor
+          star.speedY += gAcc * star.gravity
           if (star.spinRadius) {
             star.spinAngle += star.spinSpeed * speed
             star.x += Math.sin(star.spinAngle) * star.spinRadius * speed

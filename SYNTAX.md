@@ -99,6 +99,14 @@ glitter 模式说明：
 | `strobe` | boolean | false | 频闪效果（星点生命周期 46%~54% 处开始闪动） |
 | `strobeColor` | string | — | 频闪时的颜色，不设置则为随机 |
 
+### 物理
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `gravity` | number | 1 | 0 – 5 | 重力倍率，作用于星点下落加速度。0 为无重力，越大下落越快 |
+| `fade` | number | 1 | 0 – 2 | 空气阻力倍率，越大星点减速越明显。0 为无阻力 |
+| `launchHeight` | number | 随机 | 0 – 1 | 爆炸高度比例。0 为低空，1 为高空；不设置时由引擎随机决定 |
+
 ### 双层效果
 
 | 参数 | 类型 | 默认值 | 说明 |
@@ -116,7 +124,7 @@ glitter 模式说明：
 | `floral` | boolean | false | 星点死亡时炸出密集花簇 |
 | `fallingLeaves` | boolean | false | 金色火星缓缓飘落（落叶） |
 
-> **注意：** `crossette`、`crackle`、`floral`、`fallingLeaves` 互斥，同时设置多个时只有最后面那个生效（按 `crossette → crackle → floral → fallingLeaves` 优先级）。
+> **注意：** `crossette`、`crackle`、`floral`、`fallingLeaves` **可叠加**：同时设置多个时，按 `crossette → crackle → floral → fallingLeaves` 顺序全部执行。
 >
 > 它们与 `onDeath` 块**可以共存**：内置特效先执行，`onDeath` 中自定义的动作后执行，两者叠加。
 
@@ -170,15 +178,33 @@ flash(半径)
 arc 数量 (弧度) { color = 颜色, life = 存活 }
 ```
 
-沿弧线均匀分布粒子。弧度默认 `2×PI`（即整圆）：
+沿弧线均匀分布粒子。弧度默认 `6.283`（2×PI，即整圆），也支持 `Math.PI`（半圆）：
 
 | 选项 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
-| `(弧度)` | number | `6.283` (2×PI) | 弧跨度，`Math.PI` = 半圆，`Math.PI*2` = 整圆 |
+| `(弧度)` | number / `Math.PI` | `6.283`（整圆） | 弧跨度。写数字（如 `3.1416` = 半圆），也可写 `Math.PI`（半圆）；整圆用 `6.283` 或省略括号 |
 | `color` | string / `inherit` | `inherit` | 子粒子颜色 |
 | `life` | number | 600 | 子粒子存活时间 (ms) |
 
 **简写：** `arc 6`（全圆 6 粒子，全部默认值）。
+
+### 动作：spiral — 螺旋分布
+
+```
+spiral 数量 (圈数) { color = 颜色, life = 存活, speed = 速度 }
+```
+
+生成螺旋排列的子粒子，从中心向外沿螺线展开：
+
+| 选项 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 100 | 子粒子数量 |
+| `(圈数)` | number | `1` | (0, 10] | 螺旋圈数，可省略 |
+| `color` | string / `inherit` | `inherit` | — | 子粒子颜色 |
+| `life` | number | 600 | 100 – 3000 | 子粒子存活时间 (ms) |
+| `speed` | number | 1.0 | 0.1 – 5 | 扩散速度倍率 |
+
+**简写：** `spiral 12`（1 圈 12 粒子，全部默认值）。
 
 ---
 
@@ -202,7 +228,7 @@ color = "#ff0043"
 glitter = "light"
 ```
 
-用双引号包裹，支持转义字符 `\\`。参数名、关键词（`firework`、`onDeath`、`burst`、`flash`、`arc`）不需要引号。
+用双引号包裹，支持转义字符 `\\`。参数名、关键词（`firework`、`onDeath`、`burst`、`flash`、`arc`、`spiral`）不需要引号。
 
 颜色十六进制值 `#rrggbb` 不用加引号，解析器自动识别为字符串。
 
@@ -228,7 +254,7 @@ pistil = false
 | 值 | 可用于 | 含义 |
 |------|--------|------|
 | `random` | `color` | 随机选取颜色 |
-| `inherit` | `burst.color` / `arc.color` | 继承死亡星点自身的颜色 |
+| `inherit` | `burst.color` / `arc.color` / `spiral.color` | 继承死亡星点自身的颜色 |
 
 ### 标识符
 

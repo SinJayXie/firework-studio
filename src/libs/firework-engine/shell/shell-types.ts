@@ -26,6 +26,9 @@ export interface ShellOptions {
   strobeColor?: string | null
   ring?: boolean
   horsetail?: boolean
+  gravity?: number
+  fade?: number
+  launchHeight?: number
   onDeath?: (star: StarData, fw: Firework) => void
 }
 

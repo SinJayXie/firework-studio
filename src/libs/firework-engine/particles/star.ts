@@ -1,6 +1,8 @@
 export interface StarData {
   visible: boolean
   heavy: boolean
+  gravity: number
+  fade: number
   x: number; y: number
   prevX: number; prevY: number
   color: string

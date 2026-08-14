@@ -98,12 +98,27 @@ const { t } = useI18n()
 const shellCode = ref(`// ─── Example ───
 
 firework {
-    name = "red-ball"
-    size = 260
-    color = #ff0043
+    name = "nebula-spiral"
+    size = 300
+    life = 1200
+    color = #1e7fff
+    secondColor = #14fc56
+    glitter = light
+    glitterColor = #ffffff
+
+    // 物理参数
+    gravity = 1.2
+    fade = 0.8
+    launchHeight = 0.6
+
+    ring = true
+    strobe = true
+    strobeColor = #ffffff
 
     onDeath {
         burst 6 { color = inherit, life = 400, speed = 0.6 }
+        arc 8 (Math.PI) { color = inherit, life = 500 }
+        spiral 16 (2) { color = inherit, life = 600, speed = 1.0 }
         flash(25)
     }
 }

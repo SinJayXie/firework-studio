@@ -5,6 +5,7 @@ import type { ParsedShell, OnDeathAction, ShellParseError } from "./shell-parser
 import { shellTypes, shellNameMap, type ShellOptions, type ShellFactory } from "./shell-types"
 import type { StarData } from "../particles/star"
 import { createBurst, createParticleArc } from "../particles/particle-utils"
+import { PI_2 } from "../utils/constants"
 import type Firework from "../core/firework"
 
 export interface ShellLoadResult {
@@ -36,6 +37,19 @@ function compileOnDeath(actions: OnDeathAction[]): (star: StarData, fw: Firework
           createParticleArc(0, action.arcAngle, action.count, 0.5, (angle) => {
             fw.addStar(star.x, star.y, color, angle, Math.random() * 0.6 + 0.75, life)
           })
+          break
+        }
+        case "spiral": {
+          const color = resolveColor(action.options.color, star.color)
+          const life = typeof action.options.life === "number" ? action.options.life : 600
+          const speed = typeof action.options.speed === "number" ? action.options.speed : 1
+          const startAngle = Math.random() * PI_2
+          for (let i = 0; i < action.count; i++) {
+            const t = action.count === 1 ? 0 : i / (action.count - 1)
+            const angle = startAngle + t * action.turns * PI_2
+            const speedMult = (0.3 + t * 0.7) * speed * 2.2
+            fw.addStar(star.x, star.y, color, angle, speedMult, life, star.speedX, star.speedY)
+          }
           break
         }
       }
@@ -77,6 +91,9 @@ function buildShellOptions(shell: ParsedShell): ShellOptions {
     crackle: p.crackle === true,
     floral: p.floral === true,
     fallingLeaves: p.fallingLeaves === true,
+    gravity: typeof p.gravity === "number" ? p.gravity : 1,
+    fade: typeof p.fade === "number" ? p.fade : 1,
+    launchHeight: typeof p.launchHeight === "number" ? p.launchHeight : undefined,
     onDeath: hasOnDeath ? compileOnDeath(shell.onDeath) : undefined,
   }
 }
