@@ -1,0 +1,61 @@
+// ─── 环形烟花 ───
+// ring = true 让星点沿环形排列，形成光环效果
+
+// 单色环
+firework {
+    name = "纯红环"
+    size = 300
+    life = 900
+    color = #ff0043
+    ring = true
+    glitter = light
+    glitterColor = #ffffff
+}
+
+// 多色环
+firework {
+    name = "彩虹环"
+    size = 320
+    life = 1000
+    color = [#ff0043, #ffbf36, #00ff88, #1e7fff, #e60aff]
+    ring = true
+    glitter = medium
+    glitterColor = #ffffff
+}
+
+// 带花蕊的环
+firework {
+    name = "金蕊红环"
+    size = 300
+    life = 1000
+    color = #ff0043
+    ring = true
+    pistil = true
+    pistilColor = #ffd700
+    glitter = light
+    glitterColor = #ffffff
+
+    onDeath {
+        arc 4 (6.283) { color = inherit, life = 400 }
+        flash(25)
+    }
+}
+
+// 大环 + 流苏
+firework {
+    name = "流光环"
+    size = 350
+    life = 1100
+    color = [#1e7fff, #00aaff]
+    ring = true
+    pistil = true
+    pistilColor = #ffffff
+    streamers = true
+    glitter = medium
+    glitterColor = #ffffff
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 500 }
+        flash(30)
+    }
+}

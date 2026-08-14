@@ -1,0 +1,794 @@
+
+firework {
+    name = "金雨"
+    size = 220
+    life = 2800
+    density = 0.5
+    color = #ffbf36
+    glitter = willow
+
+    onDeath {
+
+        burst 4 { color = #ffbf36, life = 600, speed = 0.4 }
+    }
+}
+
+firework {
+    name = "霓虹爆"
+    size = 290
+    life = 1100
+    color = [#ff0043, #e60aff, #1e7fff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.1
+
+    onDeath {
+        burst 6 { color = inherit, life = 450, speed = 0.7 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "蓝钻"
+    size = 310
+    life = 950
+    color = #1e7fff
+    glitter = light
+    glitterColor = #ffffff
+    ring = true
+    density = 1.2
+
+    onDeath {
+        arc 4 (6.283) { color = inherit, life = 350 }
+        flash(25)
+    }
+}
+
+firework {
+    name = "樱花雨"
+    size = 260
+    life = 1400
+    color = [#ff0043, #e60aff, #ffffff]
+    glitter = medium
+    glitterColor = #ffbf36
+    density = 0.9
+    pistil = true
+    pistilColor = #ffffff
+
+    onDeath {
+        burst 8 { color = inherit, life = 500, speed = 0.5 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "流星轨迹"
+    size = 380
+    life = 1000
+    color = [#ffbf36, #ffffff]
+    glitter = thick
+    glitterColor = #ffbf36
+    density = 1.0
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        arc 3 (6.283) { color = inherit, life = 600 }
+        flash(40)
+    }
+}
+
+firework {
+    name = "绯红玫瑰"
+    size = 280
+    life = 1300
+    color = [#ff0043, #e60aff]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 1.0
+    pistil = true
+    pistilColor = #ffbf36
+    ring = true
+
+    onDeath {
+        burst 5 { color = inherit, life = 500, speed = 0.6 }
+        flash(28)
+    }
+}
+
+firework {
+    name = "银河瀑布"
+    size = 350
+    life = 2200
+    density = 0.7
+    color = [#1e7fff, #e60aff, #ffffff]
+    glitter = heavy
+    glitterColor = #ffffff
+    pistil = true
+    pistilColor = #ffbf36
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 700 }
+        burst 4 { color = #ffbf36, life = 400, speed = 0.3 }
+        flash(45)
+    }
+}
+
+firework {
+    name = "翠绿精灵"
+    size = 270
+    life = 1200
+    color = [#00ff88, #00cc66, #ffffff]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 0.8
+    pistil = true
+    pistilColor = #ffffff
+    ring = true
+
+    onDeath {
+        arc 5 (6.283) { color = inherit, life = 500 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "烈焰风暴"
+    size = 320
+    life = 900
+    color = [#ff3300, #ff6600, #ffbf36]
+    glitter = heavy
+    glitterColor = #ffbf36
+    density = 1.3
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        burst 8 { color = inherit, life = 400, speed = 0.8 }
+        flash(38)
+    }
+}
+
+firework {
+    name = "极光之舞"
+    size = 360
+    life = 1800
+    color = [#00ffcc, #00aaff, #6600ff, #cc00ff]
+    glitter = willow
+    density = 0.6
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 800 }
+        burst 3 { color = #ffffff, life = 500, speed = 0.4 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "星光璀璨"
+    size = 240
+    life = 1000
+    color = [#ffffff, #ffbf36, #ffd700]
+    glitter = light
+    glitterColor = #ffffff
+    density = 1.0
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        burst 12 { color = inherit, life = 350, speed = 0.9 }
+        flash(20)
+    }
+}
+
+firework {
+    name = "紫罗兰"
+    size = 280
+    life = 1500
+    color = [#9933ff, #cc66ff, #e60aff, #ffffff]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 0.9
+    pistil = true
+    pistilColor = #ffffff
+    ring = true
+
+    onDeath {
+        burst 6 { color = inherit, life = 550, speed = 0.5 }
+        arc 3 (3.14) { color = #ffbf36, life = 400 }
+        flash(32)
+    }
+}
+
+firework {
+    name = "彩虹桥"
+    size = 300
+    life = 1300
+    color = [#ff0043, #ff6600, #ffbf36, #00ff88, #1e7fff, #9933ff]
+    glitter = thick
+    glitterColor = #ffffff
+    density = 1.1
+
+    onDeath {
+        arc 7 (6.283) { color = inherit, life = 600 }
+        burst 3 { color = #ffffff, life = 300, speed = 0.3 }
+        flash(40)
+    }
+}
+
+firework {
+    name = "银色喷泉"
+    size = 200
+    life = 2000
+    color = [#ffffff, #cccccc, #e0e0ff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 0.4
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        burst 10 { color = #1e7fff, life = 500, speed = 0.6 }
+        flash(25)
+    }
+}
+
+firework {
+    name = "牡丹"
+    size = 300
+    life = 1100
+    color = [#ff0043, #ff3355, #ffffff]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 1.0
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        burst 10 { color = inherit, life = 500, speed = 0.6 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "金菊花"
+    size = 280
+    life = 1300
+    color = [#ffbf36, #ffd700, #ffffff]
+    glitter = willow
+    density = 0.7
+
+    onDeath {
+        burst 8 { color = inherit, life = 800, speed = 0.4 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "大丽花"
+    size = 330
+    life = 1200
+    color = [#ff6600, #ff0043, #ffbf36, #ffffff]
+    glitter = thick
+    glitterColor = #ffbf36
+    density = 1.1
+    pistil = true
+    pistilColor = #ffffff
+
+    onDeath {
+        burst 12 { color = inherit, life = 600, speed = 0.55 }
+        flash(42)
+    }
+}
+
+firework {
+    name = "锦冠"
+    size = 340
+    life = 1400
+    color = [#ffd700, #ffbf36, #ff6600, #ffffff]
+    glitter = heavy
+    glitterColor = #ffd700
+    density = 0.9
+    ring = true
+    pistil = true
+    pistilColor = #ffffff
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 550 }
+        burst 3 { color = #ffffff, life = 400, speed = 0.3 }
+        flash(38)
+    }
+}
+
+firework {
+    name = "千轮菊"
+    size = 400
+    life = 1600
+    color = [#ffbf36, #ffd700, #ffaa00, #ffffff]
+    glitter = willow
+    density = 0.5
+
+    onDeath {
+        arc 10 (6.283) { color = inherit, life = 900 }
+        flash(50)
+    }
+}
+
+firework {
+    name = "蜘蛛"
+    size = 260
+    life = 800
+    color = [#ff0043, #1e7fff, #00ff88]
+    glitter = light
+    density = 1.4
+
+    onDeath {
+        burst 16 { color = inherit, life = 300, speed = 1.2 }
+        flash(18)
+    }
+}
+
+firework {
+    name = "十字裂星"
+    size = 250
+    life = 1000
+    color = [#ffbf36, #ffffff]
+    glitter = thick
+    glitterColor = #ffbf36
+    density = 0.8
+
+    onDeath {
+        burst 4 { color = #ff3300, life = 300, speed = 0.3 }
+        burst 8 { color = inherit, life = 400, speed = 0.5 }
+        flash(28)
+    }
+}
+
+firework {
+    name = "时间雨"
+    size = 240
+    life = 3000
+    color = [#ffd700, #ffbf36, #ffffff]
+    glitter = willow
+    density = 0.3
+
+    onDeath {
+        burst 6 { color = inherit, life = 1200, speed = 0.25 }
+        flash(20)
+    }
+}
+
+firework {
+    name = "虎尾"
+    size = 200
+    life = 1500
+    color = [#ffbf36, #ff6600, #ffffff]
+    glitter = thick
+    glitterColor = #ffbf36
+    density = 0.6
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        burst 5 { color = inherit, life = 600, speed = 0.45 }
+        flash(32)
+    }
+}
+
+firework {
+    name = "闪光雷"
+    size = 350
+    life = 600
+    color = [#ffffff, #e0e0ff, #ccccff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.5
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        burst 14 { color = #ffffff, life = 200, speed = 1.0 }
+        flash(60)
+    }
+}
+
+firework {
+    name = "满天星"
+    size = 380
+    life = 1100
+    color = [#ffffff, #ffbf36, #ffd700, #ffaa00, #ff6600]
+    glitter = light
+    glitterColor = #ffffff
+    density = 1.2
+
+    onDeath {
+        burst 20 { color = inherit, life = 350, speed = 0.8 }
+        flash(22)
+    }
+}
+
+firework {
+    name = "双层环"
+    size = 280
+    life = 1000
+    color = [#ff0043, #1e7fff]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 1.0
+    ring = true
+    pistil = true
+    pistilColor = #ffbf36
+
+    onDeath {
+        arc 4 (6.283) { color = inherit, life = 400 }
+        arc 8 (6.283) { color = #ffffff, life = 300 }
+        flash(28)
+    }
+}
+
+firework {
+    name = "红牡丹"
+    size = 310
+    life = 1100
+    color = [#ff0000, #ff0043, #cc0033]
+    glitter = thick
+    glitterColor = #ff6666
+    density = 1.0
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        burst 8 { color = inherit, life = 500, speed = 0.5 }
+        flash(36)
+    }
+}
+
+firework {
+    name = "蓝尾彗星"
+    size = 180
+    life = 2000
+    color = [#1e7fff, #00aaff, #ffffff]
+    glitter = willow
+    density = 0.35
+
+    onDeath {
+        burst 3 { color = inherit, life = 1000, speed = 0.2 }
+        arc 4 (3.14) { color = #ffffff, life = 600 }
+        flash(20)
+    }
+}
+
+firework {
+    name = "爆裂星"
+    size = 300
+    life = 800
+    color = [#ff3300, #ff6600, #ffbf36, #ffffff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.4
+    strobe = true
+    strobeColor = #ffbf36
+
+    onDeath {
+        burst 10 { color = inherit, life = 300, speed = 0.9 }
+        burst 6 { color = #ff0043, life = 250, speed = 0.5 }
+        flash(45)
+    }
+}
+
+firework {
+    name = "金色垂柳"
+    size = 300
+    life = 2500
+    color = [#ffd700, #ffbf36, #ffaa00]
+    glitter = willow
+    density = 0.4
+
+    onDeath {
+        burst 6 { color = inherit, life = 1000, speed = 0.3 }
+        flash(25)
+    }
+}
+
+firework {
+    name = "五彩斑斓"
+    size = 320
+    life = 1000
+    color = [#ff0000, #ff6600, #ffdd00, #00ff44, #0066ff, #9900ff]
+    glitter = thick
+    glitterColor = #ffffff
+    density = 1.2
+    pistil = true
+    pistilColor = #ffffff
+
+    onDeath {
+        burst 8 { color = inherit, life = 450, speed = 0.6 }
+        arc 4 (6.283) { color = #ffbf36, life = 350 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "金丝菊"
+    size = 260
+    life = 1500
+    color = [#ffbf36, #ffd700, #ffffff]
+    glitter = medium
+    glitterColor = #ffd700
+    density = 0.8
+    ring = true
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 600 }
+        burst 4 { color = #ffffff, life = 400, speed = 0.35 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "霹雳"
+    size = 220
+    life = 700
+    color = [#ffffff, #e0e0ff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.3
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        burst 12 { color = inherit, life = 250, speed = 1.1 }
+        burst 6 { color = #ffbf36, life = 200, speed = 0.7 }
+        flash(50)
+    }
+}
+
+firework {
+    name = "锦鲤戏水"
+    size = 240
+    life = 1800
+    color = [#ff3300, #ff6600, #ffbf36, #ffffff]
+    glitter = medium
+    glitterColor = #ffbf36
+    density = 0.7
+    ring = true
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        arc 5 (6.283) { color = inherit, life = 700 }
+        burst 4 { color = #1e7fff, life = 500, speed = 0.4 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "火树银花"
+    size = 350
+    life = 1200
+    color = [#ffbf36, #ffffff, #ffd700]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.0
+    strobe = true
+    strobeColor = #ffbf36
+    pistil = true
+    pistilColor = #ffffff
+
+    onDeath {
+        burst 10 { color = inherit, life = 450, speed = 0.65 }
+        arc 5 (3.14) { color = #ff0043, life = 350 }
+        flash(40)
+    }
+}
+
+firework {
+    name = "紫霞满天"
+    size = 360
+    life = 1400
+    color = [#9933ff, #cc66ff, #ff66cc, #ffffff]
+    glitter = willow
+    density = 0.55
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        arc 8 (6.283) { color = inherit, life = 700 }
+        burst 3 { color = #ffffff, life = 500, speed = 0.3 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "天女散花"
+    size = 400
+    life = 1600
+    color = [#ff0043, #ff6699, #ffbf36, #ffffff, #ff6600]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 0.8
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        burst 14 { color = inherit, life = 600, speed = 0.55 }
+        arc 5 (6.283) { color = #1e7fff, life = 450 }
+        flash(42)
+    }
+}
+
+firework {
+    name = "雷神之锤"
+    size = 380
+    life = 700
+    color = [#ffffff, #ccccff, #e0e0ff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.6
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        burst 18 { color = inherit, life = 200, speed = 1.0 }
+        flash(70)
+    }
+}
+
+firework {
+    name = "春满人间"
+    size = 320
+    life = 1300
+    color = [#ff6699, #ff0043, #ffbf36, #00ff88, #ffffff]
+    glitter = thick
+    glitterColor = #ffffff
+    density = 1.0
+    pistil = true
+    pistilColor = #ffd700
+    ring = true
+
+    onDeath {
+        burst 8 { color = inherit, life = 500, speed = 0.5 }
+        arc 4 (6.283) { color = #ffffff, life = 400 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "龙吟九天"
+    size = 420
+    life = 1500
+    color = [#ffbf36, #ffd700, #ff6600, #ff0043]
+    glitter = heavy
+    glitterColor = #ffd700
+    density = 0.9
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        arc 8 (6.283) { color = inherit, life = 650 }
+        burst 6 { color = #ffffff, life = 400, speed = 0.4 }
+        burst 4 { color = #ff0043, life = 300, speed = 0.25 }
+        flash(48)
+    }
+}
+
+firework {
+    name = "梦幻星球"
+    size = 300
+    life = 1000
+    color = [#00aaff, #6600ff, #ff00aa, #ffffff]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 1.0
+    ring = true
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 500 }
+        burst 4 { color = #ffffff, life = 350, speed = 0.3 }
+        flash(32)
+    }
+}
+
+firework {
+    name = "十字星"
+    size = 280
+    life = 950
+    color = [#ff0043, #1e7fff]
+    glitter = light
+    glitterColor = #ffffff
+    density = 0.9
+    crossette = true
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        flash(50)
+    }
+}
+
+firework {
+    name = "花簇绽放"
+    size = 320
+    life = 800
+    color = [#ff6699, #ffbf36, #ffffff]
+    glitter = medium
+    glitterColor = #ffbf36
+    density = 0.5
+    floral = true
+
+    onDeath {
+        flash(40)
+    }
+}
+
+firework {
+    name = "噼啪电光"
+    size = 350
+    life = 750
+    color = [#ffd700, #ffbf36]
+    glitter = light
+    glitterColor = #ffd700
+    density = 1.0
+    crackle = true
+    pistil = true
+    pistilColor = #ffffff
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        flash(45)
+    }
+}
+
+firework {
+    name = "金叶飘落"
+    size = 300
+    life = 800
+    color = [#ffbf36, #ff6600]
+    glitter = medium
+    glitterColor = #ffd700
+    density = 0.4
+    fallingLeaves = true
+
+    onDeath {
+        flash(35)
+    }
+}
+
+firework {
+    name = "马尾流星"
+    size = 250
+    life = 3000
+    color = [#1e7fff, #ffffff]
+    glitter = medium
+    glitterColor = #ffffff
+    density = 1.0
+    horsetail = true
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        burst 6 { color = inherit, life = 600, speed = 0.4 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "白羽流苏"
+    size = 300
+    life = 1200
+    color = [#ff0043, #1e7fff, #e60aff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 0.8
+    streamers = true
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        burst 8 { color = inherit, life = 500, speed = 0.6 }
+        flash(35)
+    }
+}

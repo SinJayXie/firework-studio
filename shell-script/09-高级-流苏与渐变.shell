@@ -1,0 +1,87 @@
+// ─── 流苏 (streamers) 与颜色渐变 (secondColor) ───
+
+// streamers - 白色流苏光带
+firework {
+    name = "流苏红"
+    size = 280
+    life = 1100
+    color = #ff0043
+    glitter = heavy
+    glitterColor = #ffffff
+    streamers = true
+
+    onDeath {
+        burst 6 { color = inherit, life = 500, speed = 0.5 }
+        flash(30)
+    }
+}
+
+// streamers + pistil
+firework {
+    name = "流苏花蕊"
+    size = 300
+    life = 1200
+    color = [#1e7fff, #e60aff]
+    glitter = heavy
+    glitterColor = #ffffff
+    streamers = true
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        burst 8 { color = inherit, life = 500, speed = 0.6 }
+        flash(35)
+    }
+}
+
+// secondColor - 颜色渐变（星点后半段渐变为该颜色）
+firework {
+    name = "红变金"
+    size = 280
+    life = 1200
+    color = #ff0043
+    secondColor = #ffbf36
+    glitter = medium
+    glitterColor = #ffffff
+}
+
+// secondColor + 多色
+firework {
+    name = "紫变白"
+    size = 280
+    life = 1300
+    color = #9933ff
+    secondColor = #ffffff
+    glitter = heavy
+    glitterColor = #ffffff
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        burst 5 { color = inherit, life = 500, speed = 0.5 }
+        flash(28)
+    }
+}
+
+// 全效果组合
+firework {
+    name = "终极流苏"
+    size = 350
+    life = 1400
+    color = [#ff0043, #ffbf36, #1e7fff]
+    secondColor = #ffffff
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.0
+    streamers = true
+    pistil = true
+    pistilColor = #ffd700
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 600 }
+        burst 4 { color = #ffffff, life = 400, speed = 0.4 }
+        flash(40)
+    }
+}

@@ -1,0 +1,74 @@
+// ─── 星点死亡特效 ───
+// crossette、crackle、floral、fallingLeaves
+// 注意：这些效果互斥，同时设置多个只有最后一个生效
+// 且它们会覆盖 onDeath 中的自定义动作
+
+// crossette - 十字裂星
+firework {
+    name = "十字裂星"
+    size = 280
+    life = 950
+    color = [#ff0043, #1e7fff]
+    glitter = light
+    glitterColor = #ffffff
+    density = 0.9
+    crossette = true
+    pistil = true
+    pistilColor = #ffd700
+
+    onDeath {
+        flash(30)
+    }
+}
+
+// crackle - 噼啪火花
+firework {
+    name = "噼啪火花"
+    size = 350
+    life = 750
+    color = #ffd700
+    glitter = light
+    glitterColor = #ffd700
+    density = 1.0
+    crackle = true
+    pistil = true
+    pistilColor = #ffffff
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        flash(45)
+    }
+}
+
+// floral - 花簇绽放
+firework {
+    name = "花簇绽放"
+    size = 320
+    life = 800
+    color = [#ff6699, #ffbf36, #ffffff]
+    glitter = medium
+    glitterColor = #ffbf36
+    density = 0.5
+    floral = true
+
+    onDeath {
+        flash(40)
+    }
+}
+
+// fallingLeaves - 金叶飘落
+firework {
+    name = "金叶飘落"
+    size = 300
+    life = 800
+    color = [#ffbf36, #ff6600]
+    glitter = medium
+    glitterColor = #ffd700
+    density = 0.4
+    fallingLeaves = true
+
+    onDeath {
+        flash(35)
+    }
+}

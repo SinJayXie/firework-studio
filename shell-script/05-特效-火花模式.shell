@@ -1,0 +1,62 @@
+// ─── 火花模式对比 ───
+// glitter 六种模式效果演示
+
+// light - 稀疏轻闪
+firework {
+    name = "轻闪"
+    size = 240
+    life = 1000
+    color = #1e7fff
+    glitter = light
+    glitterColor = #ffffff
+}
+
+// medium - 标准火星
+firework {
+    name = "中闪"
+    size = 250
+    life = 1200
+    color = #ff0043
+    glitter = medium
+    glitterColor = #ffbf36
+}
+
+// heavy - 华丽厚尾
+firework {
+    name = "厚尾"
+    size = 280
+    life = 1400
+    color = [#ff0043, #e60aff]
+    glitter = heavy
+    glitterColor = #ffffff
+}
+
+// thick - 浓密拖尾
+firework {
+    name = "浓尾"
+    size = 300
+    life = 1400
+    color = [#ffbf36, #ffffff]
+    glitter = thick
+    glitterColor = #ffbf36
+}
+
+// streamer - 流束线条
+firework {
+    name = "流束"
+    size = 260
+    life = 1000
+    color = #e60aff
+    glitter = streamer
+    glitterColor = #ffffff
+}
+
+// willow - 杨柳垂落（低速长拖尾）
+firework {
+    name = "垂柳"
+    size = 260
+    life = 3000
+    density = 0.4
+    color = #ffd700
+    glitter = willow
+}

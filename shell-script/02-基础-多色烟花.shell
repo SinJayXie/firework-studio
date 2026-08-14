@@ -1,0 +1,61 @@
+// ─── 多色烟花 ───
+// color 使用数组，引擎自动交替或分半圆渲染
+
+// 双色交替
+firework {
+    name = "红蓝交替"
+    size = 280
+    life = 1000
+    color = [#ff0043, #1e7fff]
+    glitter = medium
+
+    onDeath {
+        burst 5 { color = inherit, life = 400, speed = 0.5 }
+        flash(25)
+    }
+}
+
+// 三色渐变
+firework {
+    name = "三色霓虹"
+    size = 300
+    life = 1100
+    color = [#ff0043, #e60aff, #1e7fff]
+    glitter = heavy
+    glitterColor = #ffffff
+
+    onDeath {
+        burst 8 { color = inherit, life = 450, speed = 0.6 }
+        flash(35)
+    }
+}
+
+// 冷色系
+firework {
+    name = "深海冷色"
+    size = 280
+    life = 1200
+    color = [#00ffcc, #00aaff, #6600ff, #ffffff]
+    glitter = medium
+    glitterColor = #ffffff
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 500 }
+        flash(30)
+    }
+}
+
+// 暖色系
+firework {
+    name = "夕阳暖色"
+    size = 280
+    life = 1200
+    color = [#ff6600, #ffbf36, #ff0043, #ffd700]
+    glitter = thick
+    glitterColor = #ffbf36
+
+    onDeath {
+        burst 6 { color = inherit, life = 500, speed = 0.5 }
+        flash(32)
+    }
+}

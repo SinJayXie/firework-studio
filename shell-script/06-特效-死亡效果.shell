@@ -1,0 +1,75 @@
+// ─── onDeath 死亡效果 ───
+// 星点死亡时触发子效果：burst、flash、arc
+
+// burst - 圆形爆发
+firework {
+    name = "二次爆发"
+    size = 260
+    life = 900
+    color = [#ff0043, #1e7fff]
+    glitter = medium
+
+    onDeath {
+        burst 8 { color = inherit, life = 500, speed = 0.6 }
+        flash(30)
+    }
+}
+
+// arc - 弧线分布
+firework {
+    name = "弧线绽放"
+    size = 300
+    life = 1000
+    color = [#ffbf36, #ffffff]
+    glitter = light
+
+    onDeath {
+        arc 6 (6.283) { color = inherit, life = 600 }
+        flash(35)
+    }
+}
+
+// burst + arc 组合
+firework {
+    name = "双重死亡"
+    size = 280
+    life = 950
+    color = [#e60aff, #00ff88]
+    glitter = medium
+    glitterColor = #ffffff
+
+    onDeath {
+        arc 5 (6.283) { color = inherit, life = 500 }
+        burst 4 { color = #ffffff, life = 350, speed = 0.4 }
+        flash(35)
+    }
+}
+
+// flash - 不同强度
+firework {
+    name = "强闪光"
+    size = 350
+    life = 800
+    color = [#ffffff, #ccccff]
+    glitter = heavy
+    glitterColor = #ffffff
+    density = 1.2
+
+    onDeath {
+        flash(60)
+    }
+}
+
+// 半圆 arc
+firework {
+    name = "半圆弧"
+    size = 260
+    life = 1000
+    color = [#ff0043, #ffbf36]
+    glitter = medium
+
+    onDeath {
+        arc 4 (3.14) { color = inherit, life = 450 }
+        flash(25)
+    }
+}

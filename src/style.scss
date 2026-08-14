@@ -1,0 +1,113 @@
+:root {
+  /* iOS dark palette */
+  --ios-bg-root: #000;
+  --ios-bg-primary: #1c1c1e;
+  --ios-bg-secondary: #2c2c2e;
+  --ios-bg-tertiary: #3a3a3c;
+  --ios-bg-quaternary: #48484a;
+
+  --ios-fill-primary: rgba(120, 120, 128, 0.2);
+  --ios-fill-secondary: rgba(120, 120, 128, 0.16);
+  --ios-fill-tertiary: rgba(120, 120, 128, 0.12);
+  --ios-fill-quaternary: rgba(120, 120, 128, 1);
+
+  --ios-separator: rgba(84, 84, 88, 0.6);
+  --ios-separator-opaque: #38383a;
+
+  --ios-label-primary: #fff;
+  --ios-label-secondary: rgba(235, 235, 245, 0.6);
+  --ios-label-tertiary: rgba(235, 235, 245, 0.3);
+  --ios-label-quaternary: rgba(235, 235, 245, 0.18);
+
+  --ios-tint: #0a84ff;
+  --ios-tint-dim: rgba(10, 132, 255, 0.3);
+  --ios-green: #30d158;
+  --ios-red: #ff453a;
+
+  --ios-radius-sm: 8px;
+  --ios-radius: 10px;
+  --ios-radius-lg: 14px;
+
+  --ios-glass-bg: rgba(28, 28, 30, 0.75);
+  --ios-glass-border: rgba(255, 255, 255, 0.08);
+  --ios-glass-blur: saturate(180%) blur(20px);
+
+  /* Typography */
+  --font: "PingFang SC", "Microsoft YaHei", arial, sans-serif;
+  --letter-spacing: 0.04em;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--ios-bg-root);
+}
+
+body {
+  color: var(--ios-label-secondary);
+  font-family: var(--font);
+  line-height: 1.25;
+  letter-spacing: var(--letter-spacing);
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+#app {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* iOS frosted glass utility */
+.glass {
+  background: var(--ios-glass-bg);
+  backdrop-filter: var(--ios-glass-blur);
+  -webkit-backdrop-filter: var(--ios-glass-blur);
+  border: 1px solid var(--ios-glass-border);
+}
+
+.glass-heavy {
+  background: rgba(28, 28, 30, 0.75);
+  backdrop-filter: saturate(180%) blur(30px);
+  -webkit-backdrop-filter: saturate(180%) blur(30px);
+  border: 1px solid var(--ios-glass-border);
+}
+
+/* Loading screen */
+.loading-screen {
+  width: 100%;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--ios-label-secondary);
+  font-family: var(--font);
+  letter-spacing: var(--letter-spacing);
+}
+
+.loading-screen__header {
+  font-size: 2.2em;
+  color: var(--ios-label-primary);
+}
+
+.loading-screen__status {
+  margin-top: 1em;
+  font-size: 0.8em;
+  opacity: 0.6;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ios-fill-primary); border-radius: 2px; }
+
+/* 全局输入框防焦点滚动 */
+input {
+  scroll-margin: 0;
+}
