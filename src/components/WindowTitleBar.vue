@@ -3,8 +3,10 @@ import { ref, onMounted, onUnmounted, watch } from "vue"
 import { useI18n } from "vue-i18n"
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { useRouter } from "vue-router"
+import { useWindowTitle } from "../composables/useWindowTitle"
 
 const { t } = useI18n()
+const { fileName } = useWindowTitle()
 
 const isMaximized = ref(false)
 const transparent = ref(false)
@@ -56,7 +58,8 @@ onUnmounted(() => {
   <div class="win-title" :class="{ 'transparent': transparent }">
     <div class="win-title__left">
       <img class="win-title__left--logo"  src="../assets/images/32x32.png" alt="logo" />
-      {{ t("window.title") }}
+      <span class="win-title__left--app">{{ t("window.title") }}</span>
+      <span v-if="fileName" class="win-title__left--file">— {{ fileName }}</span>
     </div>
 
     <div class="win-title__btns">
@@ -104,6 +107,19 @@ onUnmounted(() => {
     &--logo {
       width: 16px;
       height: 16px;
+    }
+
+    &--app {
+      flex-shrink: 0;
+    }
+
+    &--file {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 400;
+      opacity: 0.75;
     }
   }
 

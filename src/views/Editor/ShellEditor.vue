@@ -1,12 +1,10 @@
 <template>
-  <PanelCard class="shell-editor" :title="fileName || t('shellEditor.untitled')" icon="i-mdi-code-braces">
+  <PanelCard class="shell-editor" :title="t('shellEditor.title')" icon="i-mdi-code-braces">
     <template #actions>
       <div class="shell-editor__toolbar">
         <ToolButton icon="i-mdi-folder-open-outline" :title="t('editor.openTitle')" @click="handleOpenFile">{{ t('editor.openFile') }}</ToolButton>
         <ToolButton icon="i-mdi-content-save" :title="t('editor.saveTitle')" @click="handleSaveFile">{{ t('editor.saveFile') }}</ToolButton>
         <ToolButton icon="i-mdi-format-align-left" :title="t('editor.formatTitle')" @click="formatDocument">{{ t('editor.format') }}</ToolButton>
-        <ToolButton icon="i-mdi-play" :title="t('editor.runTitle')" variant="primary" @click="$emit('run-all')">{{ t('editor.runAll') }}</ToolButton>
-        <ToolButton icon="i-mdi-code-tags" :title="t('editor.parseTitle')" @click="$emit('parse')">{{ t('editor.parse') }}</ToolButton>
       </div>
     </template>
 
@@ -27,16 +25,14 @@ import { registerFireworkShellFeatures } from "./monaco/features"
 
 const props = defineProps<{
   modelValue: string
-  fileName?: string
   filePath?: string
 }>()
 
 const emit = defineEmits<{
   "update:modelValue": [value: string]
-  "run-all": []
   "run-firework": [name: string]
-  "parse": []
   "file-opened": [file: { name: string; path?: string }]
+  "cursor-block": [index: number]
 }>()
 
 const { t } = useI18n()
@@ -69,6 +65,32 @@ function formatDocument() {
   editor?.getAction("editor.action.formatDocument")?.run()
 }
 
+function fireworkBlockStartLines(code: string): number[] {
+  const lines = code.split("\n")
+  const starts: number[] = []
+  for (let i = 0; i < lines.length; i++) {
+    const t = lines[i].trim()
+    if (t.startsWith("firework") && (t.endsWith("{") || t === "firework")) starts.push(i + 1)
+  }
+  return starts
+}
+
+function blockIndexAtLine(code: string, line: number): number {
+  const starts = fireworkBlockStartLines(code)
+  let count = 0
+  for (const s of starts) if (s <= line) count++
+  return Math.max(0, count - 1)
+}
+
+function revealBlock(index: number) {
+  if (!editor || !model) return
+  const starts = fireworkBlockStartLines(model.getValue())
+  const line = starts[index] ?? 1
+  editor.revealLineInCenter(line)
+  editor.setPosition({ lineNumber: line, column: 1 })
+  editor.focus()
+}
+
 const { openFile: openFileIO, saveFile: saveFileIO } = useFileIO()
 
 async function handleOpenFile() {
@@ -79,7 +101,7 @@ async function handleOpenFile() {
 }
 
 async function handleSaveFile() {
-  const savedPath = await saveFileIO(props.modelValue, props.filePath || props.fileName || undefined)
+  const savedPath = await saveFileIO(props.modelValue, props.filePath || undefined)
   if (savedPath) {
     emit("file-opened", { name: savedPath.split(/[\\/]/).pop() || t("common.untitled"), path: savedPath })
   }
@@ -118,6 +140,10 @@ onMounted(() => {
     updateMarkers(value)
   })
 
+  editorInstance.onDidChangeCursorPosition((e) => {
+    emit("cursor-block", blockIndexAtLine(editorModel.getValue(), e.position.lineNumber))
+  })
+
   featuresDisposable = registerFireworkShellFeatures((name) => emit("run-firework", name))
   updateMarkers(props.modelValue)
 })
@@ -140,6 +166,8 @@ onBeforeUnmount(() => {
   model?.dispose()
   model = null
 })
+
+defineExpose({ revealBlock })
 </script>
 
 <style scoped lang="scss">
@@ -149,6 +177,7 @@ onBeforeUnmount(() => {
 
   &__toolbar {
     display: flex;
+    align-items: center;
     gap: 6px;
   }
 

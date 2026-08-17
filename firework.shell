@@ -792,3 +792,154 @@ firework {
         flash(35)
     }
 }
+
+firework {
+    name = "环形庆典"
+    size = 320
+    life = 1000
+    color = #ffbf36
+    strobe = true
+    strobeColor = #ffffff
+
+    onDeath {
+        ring 36 { color = gradient(#ff0043, #1e7fff), life = 600, speed = 0.9 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "波浪海洋"
+    size = 320
+    life = 1200
+    color = #00ff88
+    secondColor = #1e7fff
+
+    onDeath {
+        wave 40 (3) { color = gradient(#00ff88, #1e7fff), life = 600, duration = 600 }
+        burst 4 { color = inherit, life = 400, speed = 0.5 }
+    }
+}
+
+firework {
+    name = "心形告白"
+    size = 300
+    life = 1100
+    color = #ff0043
+
+    onDeath {
+        heart 64 { color = gradient(#ff0043, #ff6699), life = 700, speed = 0.9 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "螺旋星云"
+    size = 300
+    life = 1400
+    color = #1e7fff
+    gravity = 1.2
+    fade = 0.8
+
+    onDeath {
+        spiral 16 (2) { color = gradient(#1e7fff, #00ff88), life = 600, speed = 1.0 }
+        flash(40)
+    }
+}
+
+firework {
+    name = "时序绽放"
+    size = 320
+    life = 1200
+    color = #ffbf36
+
+    onDeath {
+        ring 24 { color = inherit, life = 500, speed = 0.8 }
+        wave 32 (2) { color = gradient(#ffbf36, #ff0043), life = 600, delay = 200, duration = 400 }
+        heart 48 { color = gradient(#ff0043, #ffffff), life = 700, delay = 400, duration = 500 }
+    }
+}
+
+firework {
+    name = "五角星"
+    size = 300
+    life = 1100
+    color = #ffbf36
+
+    onDeath {
+        star 48 (5) { color = gradient(#ffbf36, #ffffff), life = 600, speed = 0.9 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "雪花纷飞"
+    size = 320
+    life = 1300
+    color = #1e7fff
+
+    onDeath {
+        snowflake 60 (6) { color = gradient(#1e7fff, #ffffff), life = 700, speed = 0.8 }
+        rain 40 { color = #00ffcc, life = 600, delay = 300 }
+    }
+}
+
+firework {
+    name = "百花齐放"
+    size = 320
+    life = 1300
+    color = #ff6699
+
+    onDeath {
+        flower 60 (8) { color = gradient(#ff6699, #ffbf36), life = 700, speed = 0.9 }
+        flash(35)
+    }
+}
+
+firework {
+    name = "几何庆典"
+    size = 320
+    life = 1100
+    color = #14fc56
+
+    onDeath {
+        square 48 { color = inherit, life = 550, speed = 0.8 }
+        triangle 44 { color = #ffbf36, life = 550, delay = 200 }
+        arrow 48 { color = #ff0043, life = 550, delay = 400 }
+    }
+}
+
+firework {
+    name = "银河漩涡"
+    size = 340
+    life = 1500
+    color = #1e7fff
+
+    onDeath {
+        vortex 60 (3) { color = gradient(#1e7fff, #00ff88), life = 700, speed = 1.0 }
+        galaxy 80 (2) { color = gradient(#9933ff, #1e7fff), life = 800, delay = 300 }
+    }
+}
+
+firework {
+    name = "喷泉礼赞"
+    size = 300
+    life = 1300
+    color = #ffbf36
+
+    onDeath {
+        fountain 50 { color = gradient(#ffbf36, #ffffff), life = 600, speed = 1.0 }
+        flash(30)
+    }
+}
+
+firework {
+    name = "文字告白"
+    size = 320
+    life = 1300
+    color = #ff0043
+
+    onDeath {
+        text 90 ("LOVE") { color = gradient(#ff0043, #ff6699), life = 800, speed = 0.9 }
+        flash(30)
+    }
+}

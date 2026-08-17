@@ -1,0 +1,128 @@
+firework {
+    name = "菊花"
+    size = 400
+    life = 1100
+    density = 1.2
+    color = random
+    glitter = light
+    glitterColor = #ffffff
+    pistil = true
+    pistilColor = #ffffff
+    streamers = true
+}
+
+firework {
+    name = "幽灵"
+    size = 400
+    life = 1650
+    density = 1.25
+    color = none
+    secondColor = #1e7fff
+    streamers = true
+    pistil = true
+    pistilColor = #ffffff
+}
+
+firework {
+    name = "频闪"
+    size = 372
+    life = 1300
+    lifeVariation = 0.4
+    density = 1.1
+    color = random
+    glitter = light
+    glitterColor = #ffffff
+    strobe = true
+    strobeColor = #ffffff
+    pistil = true
+    pistilColor = #ffffff
+}
+
+firework {
+    name = "棕榈"
+    size = 325
+    life = 2000
+    density = 0.15
+    color = random
+    glitter = thick
+}
+
+firework {
+    name = "环形"
+    size = 400
+    life = 1100
+    starCount = 28
+    color = random
+    ring = true
+    pistil = true
+    pistilColor = #ffffff
+}
+
+firework {
+    name = "十字星"
+    size = 400
+    life = 910
+    lifeVariation = 0.4
+    density = 0.85
+    color = random
+    crossette = true
+    pistil = true
+    pistilColor = #ffffff
+}
+
+firework {
+    name = "花簇"
+    size = 420
+    life = 550
+    lifeVariation = 0.5
+    density = 0.12
+    color = random
+    floral = true
+}
+
+firework {
+    name = "落叶"
+    size = 420
+    life = 550
+    lifeVariation = 0.5
+    density = 0.12
+    color = none
+    glitter = medium
+    glitterColor = #ffbf36
+    fallingLeaves = true
+}
+
+firework {
+    name = "杨柳"
+    size = 400
+    life = 3300
+    density = 0.6
+    color = none
+    glitter = willow
+    glitterColor = #ffbf36
+}
+
+firework {
+    name = "噼啪"
+    size = 455
+    life = 700
+    lifeVariation = 0.32
+    density = 1
+    color = #ffbf36
+    glitter = light
+    glitterColor = #ffbf36
+    crackle = true
+    pistil = true
+    pistilColor = #ffffff
+}
+
+firework {
+    name = "马尾"
+    size = 288
+    life = 2800
+    density = 0.9
+    color = random
+    horsetail = true
+    glitter = medium
+    glitterColor = #ffbf36
+}

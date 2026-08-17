@@ -12,8 +12,30 @@ import {
   SKY_LIGHT_NONE,
   COLOR_CODES_W_INVIS, COLOR_TUPLES, INVISIBLE,
 } from "../utils/constants"
-import { shellTypes, shellNames, fastShellBlacklist, crysanthemumShell, ringShell } from "../shell/shell-types"
-import type { ShellFactory } from "../shell/shell-types"
+import { shellTypes, shellNames } from "../shell/shell-types"
+import type { ShellFactory, ShellOptions } from "../shell/shell-types"
+
+export interface LaunchPlan {
+  single: number
+  double: number
+  triple: number
+  pyramid: number
+  barrage: number
+  barrageCooldown: number
+  finaleCount: number
+  finaleInterval: number
+}
+
+export const DEFAULT_LAUNCH_PLAN: LaunchPlan = {
+  single: 50,
+  double: 20,
+  triple: 20,
+  pyramid: 2,
+  barrage: 8,
+  barrageCooldown: 15,
+  finaleCount: 32,
+  finaleInterval: 170,
+}
 
 export interface EngineConfig {
   quality: string
@@ -29,6 +51,7 @@ export interface EngineConfig {
   fps: number
   speed: number
   debug: boolean
+  launchPlan: LaunchPlan
 }
 
 export interface EngineState {
@@ -70,6 +93,7 @@ export default class Firework {
       fps: 60,
       speed: 1,
       debug: false,
+      launchPlan: { ...DEFAULT_LAUNCH_PLAN },
     },
   }
 
@@ -102,9 +126,6 @@ export default class Firework {
   targetSkyColor = { r: 0, g: 0, b: 0 }
 
   seqSmallBarrageLastCalled = 0
-  seqSmallBarrageCooldown = 15000
-
-  finaleCount = 32
   rafId: number | null = null
   prevFrameTime: number = 0
 
@@ -292,23 +313,39 @@ export default class Firework {
   // ─── Shell sequences ───
 
   randomShellName(): string {
-    return Math.random() < 0.5 ? "Crysanthemum" : shellNames[(Math.random() * (shellNames.length - 1) + 1) | 0]
+    const candidates = shellNames.filter((n) => n !== "Random")
+    return candidates.length ? candidates[(Math.random() * candidates.length) | 0] : "Random"
+  }
+
+  fallbackShell(size: number): ShellOptions {
+    return {
+      shellSize: size,
+      spreadSize: 300 + size * 100,
+      starLife: 900 + size * 200,
+      starDensity: 1.2,
+      color: "random",
+      glitter: "light",
+    }
   }
 
   randomShell(size: number): ReturnType<ShellFactory> {
     if (this.IS_HEADER) return this.randomFastShell()(size, this)
-    return shellTypes[this.randomShellName()](size, this)
+    const name = this.randomShellName()
+    if (name === "Random") return this.fallbackShell(size)
+    const factory = shellTypes[name]
+    return factory ? factory(size, this) : this.fallbackShell(size)
   }
 
   shellFromConfig(size: number): ReturnType<ShellFactory> {
-    return shellTypes[this.shellNameSelector()](size, this)
+    const factory = shellTypes[this.shellNameSelector()]
+    return factory ? factory(size, this) : this.fallbackShell(size)
   }
 
   randomFastShell(): ShellFactory {
     const isRandom = this.shellNameSelector() === "Random"
-    let shellName = isRandom ? this.randomShellName() : this.shellNameSelector()
-    if (isRandom) { while (fastShellBlacklist.includes(shellName)) { shellName = this.randomShellName() } }
-    return shellTypes[shellName]
+    const shellName = isRandom ? this.randomShellName() : this.shellNameSelector()
+    if (shellName === "Random") return (size: number = 1) => this.fallbackShell(size)
+    return shellTypes[shellName] ?? ((size: number = 1) => this.fallbackShell(size))
   }
 
   fitShellPositionInBoundsH(position: number): number { const edge = 0.18; return (1 - edge * 2) * position + edge }
@@ -377,7 +414,7 @@ export default class Firework {
   seqPyramid(): number {
     const barrageCountHalf = this.IS_DESKTOP ? 7 : 4
     const largeSize = this.shellSizeSelector(); const smallSize = Math.max(0, largeSize - 3)
-    const randomMainShell = Math.random() < 0.78 ? crysanthemumShell : ringShell
+    const randomMainShell: ShellFactory = (size: number = 1) => this.randomShell(size)
     const randomSpecialShell: ShellFactory = (size: number = 1) => this.randomShell(size)
 
     const launchShell = (x: number, useSpecial: boolean) => {
@@ -404,7 +441,7 @@ export default class Firework {
     this.seqSmallBarrageLastCalled = Date.now()
     const barrageCount = this.IS_DESKTOP ? 11 : 5; const specialIndex = this.IS_DESKTOP ? 3 : 1
     const shellSize = Math.max(0, this.shellSizeSelector() - 2)
-    const randomMainShell = Math.random() < 0.78 ? crysanthemumShell : ringShell
+    const randomMainShell: ShellFactory = (size: number = 1) => this.randomShell(size)
     const randomSpecialShell = this.randomFastShell()
 
     const launchShell = (x: number, useSpecial: boolean) => {
@@ -428,23 +465,45 @@ export default class Firework {
     return 3400 + barrageCount * 120
   }
 
+  private pickSequence(): "single" | "double" | "triple" | "pyramid" | "barrage" {
+    const p = this.state.config.launchPlan
+    const candidates: { key: "single" | "double" | "triple" | "pyramid" | "barrage"; weight: number }[] = []
+    if (p.barrage > 0 && Date.now() - this.seqSmallBarrageLastCalled > p.barrageCooldown * 1000) {
+      candidates.push({ key: "barrage", weight: p.barrage })
+    }
+    if (p.pyramid > 0) candidates.push({ key: "pyramid", weight: p.pyramid })
+    if (p.single > 0 && !this.IS_HEADER) candidates.push({ key: "single", weight: p.single })
+    if (p.double > 0) candidates.push({ key: "double", weight: p.double })
+    if (p.triple > 0) candidates.push({ key: "triple", weight: p.triple })
+    const total = candidates.reduce((s, c) => s + c.weight, 0)
+    if (total <= 0) return "single"
+    let r = Math.random() * total
+    for (const c of candidates) {
+      r -= c.weight
+      if (r < 0) return c.key
+    }
+    return candidates[candidates.length - 1].key
+  }
+
   startSequence(): number {
     if (this.isFirstSeq) {
       this.isFirstSeq = false
       if (this.IS_HEADER) { return this.seqTwoRandom() }
-      else { new Shell(crysanthemumShell(this.shellSizeSelector(), this)).launch(0.5, 0.5, this); return 2400 }
+      else { new Shell(this.shellFromConfig(this.shellSizeSelector())).launch(0.5, 0.5, this); return 2400 }
     }
+    const plan = this.state.config.launchPlan
     if (this.finaleSelector()) {
       this.seqRandomFastShell()
-      if (this.currentFinaleCount < this.finaleCount) { this.currentFinaleCount++; return 170 }
+      if (this.currentFinaleCount < plan.finaleCount) { this.currentFinaleCount++; return plan.finaleInterval }
       else { this.currentFinaleCount = 0; return 6000 }
     }
-    const rand = Math.random()
-    if (rand < 0.08 && Date.now() - this.seqSmallBarrageLastCalled > this.seqSmallBarrageCooldown) return this.seqSmallBarrage()
-    if (rand < 0.1) return this.seqPyramid()
-    if (rand < 0.6 && !this.IS_HEADER) return this.seqRandomShell()
-    else if (rand < 0.8) return this.seqTwoRandom()
-    else return this.seqTriple()
+    switch (this.pickSequence()) {
+      case "barrage": return this.seqSmallBarrage()
+      case "pyramid": return this.seqPyramid()
+      case "single": return this.seqRandomShell()
+      case "double": return this.seqTwoRandom()
+      default: return this.seqTriple()
+    }
   }
 
   // ─── Lifecycle ───

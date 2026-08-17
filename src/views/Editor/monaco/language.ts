@@ -41,15 +41,15 @@ export function ensureFireworkShellLanguage(): void {
   })
 
   monaco.languages.setMonarchTokensProvider(FIREWORK_SHELL_LANG, {
-    keywords: ["firework", "onDeath", "burst", "flash", "arc", "spiral"],
-    builtins: ["true", "false", "random", "inherit"],
+    keywords: ["firework", "onDeath", "burst", "flash", "arc", "spiral", "ring", "wave", "heart", "star", "cross", "snowflake", "flower", "square", "triangle", "arrow", "rain", "vortex", "fountain", "galaxy", "text"],
+    builtins: ["true", "false", "random", "inherit", "gradient"],
     props: [
       "name", "size", "life", "lifeVariation", "density", "starCount",
       "color", "secondColor", "glitter", "glitterColor",
       "ring", "horsetail", "strobe", "strobeColor",
       "pistil", "pistilColor", "streamers",
       "crossette", "crackle", "floral", "fallingLeaves",
-      "gravity", "fade", "launchHeight", "speed",
+      "gravity", "fade", "launchHeight", "speed", "delay", "duration",
     ],
     tokenizer: {
       root: [

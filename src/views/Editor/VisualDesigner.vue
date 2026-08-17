@@ -223,8 +223,18 @@
             v-for="(effect, idx) in (form as DesignerForm).deathEffects"
             :key="effect.id"
             class="designer-death-item"
+            :class="{ 'designer-death-item--over': overIdx === idx && dragIdx !== idx }"
+            @dragover="onDeathDragOver(idx, $event)"
+            @drop="onDeathDrop(idx, $event)"
+            @dragend="onDeathDragEnd"
           >
             <div class="designer-death-item__header">
+              <span
+                class="designer-death-item__drag"
+                draggable="true"
+                :title="t('visualDesigner.dragToSort')"
+                @dragstart="onDeathDragStart(idx, $event)"
+              >⠿</span>
               <div class="designer-death-item__order">
                 <button class="designer-death-item__order-btn" :disabled="idx === 0" @click="moveDeathEffect(idx, -1)" title="上移">▲</button>
                 <button class="designer-death-item__order-btn" :disabled="idx === (form as DesignerForm).deathEffects.length - 1" @click="moveDeathEffect(idx, 1)" title="下移">▼</button>
@@ -256,6 +266,7 @@
                       { label: t('visualDesigner.colorInherit'), value: 'inherit' },
                       { label: t('visualDesigner.colorRandom'), value: 'random' },
                       { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                      { label: t('visualDesigner.colorGradient'), value: 'gradient' },
                     ]" @update:model-value="emitCode" />
                   </div>
                 </div>
@@ -263,6 +274,20 @@
                   <div class="designer-color-extra__row">
                     <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
                     <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'gradient'" class="designer-field designer-field--mt">
+                  <div class="designer-death-gradient">
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientFrom') }}</span>
+                      <input type="color" :value="effect.color" class="designer-color" @change="effect.color = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                    </div>
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientTo') }}</span>
+                      <input type="color" :value="effect.colorTo" class="designer-color" @change="effect.colorTo = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.colorTo" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.colorTo) }" placeholder="#1e7fff" @change="emitCode" />
+                    </div>
                   </div>
                 </div>
               </template>
@@ -302,6 +327,7 @@
                       { label: t('visualDesigner.colorInherit'), value: 'inherit' },
                       { label: t('visualDesigner.colorRandom'), value: 'random' },
                       { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                      { label: t('visualDesigner.colorGradient'), value: 'gradient' },
                     ]" @update:model-value="emitCode" />
                   </div>
                 </div>
@@ -309,6 +335,20 @@
                   <div class="designer-color-extra__row">
                     <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
                     <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'gradient'" class="designer-field designer-field--mt">
+                  <div class="designer-death-gradient">
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientFrom') }}</span>
+                      <input type="color" :value="effect.color" class="designer-color" @change="effect.color = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                    </div>
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientTo') }}</span>
+                      <input type="color" :value="effect.colorTo" class="designer-color" @change="effect.colorTo = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.colorTo" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.colorTo) }" placeholder="#1e7fff" @change="emitCode" />
+                    </div>
                   </div>
                 </div>
               </template>
@@ -338,6 +378,7 @@
                       { label: t('visualDesigner.colorInherit'), value: 'inherit' },
                       { label: t('visualDesigner.colorRandom'), value: 'random' },
                       { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                      { label: t('visualDesigner.colorGradient'), value: 'gradient' },
                     ]" @update:model-value="emitCode" />
                   </div>
                 </div>
@@ -345,6 +386,244 @@
                   <div class="designer-color-extra__row">
                     <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
                     <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'gradient'" class="designer-field designer-field--mt">
+                  <div class="designer-death-gradient">
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientFrom') }}</span>
+                      <input type="color" :value="effect.color" class="designer-color" @change="effect.color = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                    </div>
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientTo') }}</span>
+                      <input type="color" :value="effect.colorTo" class="designer-color" @change="effect.colorTo = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.colorTo" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.colorTo) }" placeholder="#1e7fff" @change="emitCode" />
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ring -->
+              <template v-if="effect.type === 'ring'">
+                <div class="designer-death-grid">
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.ringCount') }}</label>
+                    <InputNumber v-model="effect.count" :min="1" :max="200" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.ringLife') }}</label>
+                    <InputNumber v-model="effect.life" :min="100" :max="3000" :step="50" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.ringSpeed') }}</label>
+                    <InputNumber v-model="effect.speed" :min="0.1" :max="5" :step="0.1" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.ringColor') }}</label>
+                    <AppSelect v-model="effect.colorMode" variant="dark" :options="[
+                      { label: t('visualDesigner.colorInherit'), value: 'inherit' },
+                      { label: t('visualDesigner.colorRandom'), value: 'random' },
+                      { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                      { label: t('visualDesigner.colorGradient'), value: 'gradient' },
+                    ]" @update:model-value="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'custom'" class="designer-field designer-field--mt">
+                  <div class="designer-color-extra__row">
+                    <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
+                    <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'gradient'" class="designer-field designer-field--mt">
+                  <div class="designer-death-gradient">
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientFrom') }}</span>
+                      <input type="color" :value="effect.color" class="designer-color" @change="effect.color = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                    </div>
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientTo') }}</span>
+                      <input type="color" :value="effect.colorTo" class="designer-color" @change="effect.colorTo = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.colorTo" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.colorTo) }" placeholder="#1e7fff" @change="emitCode" />
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- wave -->
+              <template v-if="effect.type === 'wave'">
+                <div class="designer-death-grid">
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.waveCount') }}</label>
+                    <InputNumber v-model="effect.count" :min="1" :max="200" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.waveWaves') }}</label>
+                    <InputNumber v-model="effect.waves" :min="0.1" :max="10" :step="0.5" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.waveLife') }}</label>
+                    <InputNumber v-model="effect.life" :min="100" :max="3000" :step="50" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.waveSpeed') }}</label>
+                    <InputNumber v-model="effect.speed" :min="0.1" :max="5" :step="0.1" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.waveColor') }}</label>
+                    <AppSelect v-model="effect.colorMode" variant="dark" :options="[
+                      { label: t('visualDesigner.colorInherit'), value: 'inherit' },
+                      { label: t('visualDesigner.colorRandom'), value: 'random' },
+                      { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                      { label: t('visualDesigner.colorGradient'), value: 'gradient' },
+                    ]" @update:model-value="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'custom'" class="designer-field designer-field--mt">
+                  <div class="designer-color-extra__row">
+                    <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
+                    <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'gradient'" class="designer-field designer-field--mt">
+                  <div class="designer-death-gradient">
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientFrom') }}</span>
+                      <input type="color" :value="effect.color" class="designer-color" @change="effect.color = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                    </div>
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientTo') }}</span>
+                      <input type="color" :value="effect.colorTo" class="designer-color" @change="effect.colorTo = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.colorTo" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.colorTo) }" placeholder="#1e7fff" @change="emitCode" />
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- heart -->
+              <template v-if="effect.type === 'heart'">
+                <div class="designer-death-grid">
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.heartCount') }}</label>
+                    <InputNumber v-model="effect.count" :min="1" :max="200" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.heartLife') }}</label>
+                    <InputNumber v-model="effect.life" :min="100" :max="3000" :step="50" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.heartSpeed') }}</label>
+                    <InputNumber v-model="effect.speed" :min="0.1" :max="5" :step="0.1" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.heartColor') }}</label>
+                    <AppSelect v-model="effect.colorMode" variant="dark" :options="[
+                      { label: t('visualDesigner.colorInherit'), value: 'inherit' },
+                      { label: t('visualDesigner.colorRandom'), value: 'random' },
+                      { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                      { label: t('visualDesigner.colorGradient'), value: 'gradient' },
+                    ]" @update:model-value="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'custom'" class="designer-field designer-field--mt">
+                  <div class="designer-color-extra__row">
+                    <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
+                    <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'gradient'" class="designer-field designer-field--mt">
+                  <div class="designer-death-gradient">
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientFrom') }}</span>
+                      <input type="color" :value="effect.color" class="designer-color" @change="effect.color = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                    </div>
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientTo') }}</span>
+                      <input type="color" :value="effect.colorTo" class="designer-color" @change="effect.colorTo = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.colorTo" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.colorTo) }" placeholder="#1e7fff" @change="emitCode" />
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- 新增造型/运动/文字动作（star/cross/snowflake/flower/square/triangle/arrow/rain/vortex/fountain/galaxy/text） -->
+              <template v-if="isNewActionEffect(effect)">
+                <div class="designer-death-grid">
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.actionCount') }}</label>
+                    <InputNumber v-model="effect.count" :min="1" :max="400" @change="emitCode" />
+                  </div>
+                  <div v-if="newActionMeta(effect.type).hasParam" class="designer-field">
+                    <label class="designer-label">{{ newParamLabel(effect.type) }}</label>
+                    <InputNumber v-model="effect.param" :min="newActionMeta(effect.type).paramMin"
+                      :max="newActionMeta(effect.type).paramMax" :step="newActionMeta(effect.type).paramStep"
+                      @change="emitCode" />
+                  </div>
+                  <div v-if="newActionMeta(effect.type).hasText" class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.actionText') }}</label>
+                    <input v-model="effect.text" class="designer-input" placeholder="LOVE" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.actionLife') }}</label>
+                    <InputNumber v-model="effect.life" :min="100" :max="3000" :step="50" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.actionSpeed') }}</label>
+                    <InputNumber v-model="effect.speed" :min="0.1" :max="5" :step="0.1" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.actionColor') }}</label>
+                    <AppSelect v-model="effect.colorMode" variant="dark" :options="[
+                      { label: t('visualDesigner.colorInherit'), value: 'inherit' },
+                      { label: t('visualDesigner.colorRandom'), value: 'random' },
+                      { label: t('visualDesigner.colorCustom'), value: 'custom' },
+                      { label: t('visualDesigner.colorGradient'), value: 'gradient' },
+                    ]" @update:model-value="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'custom'" class="designer-field designer-field--mt">
+                  <div class="designer-color-extra__row">
+                    <span class="designer-color-dot designer-color-dot--sm" :style="{ background: effect.color }"></span>
+                    <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                  </div>
+                </div>
+                <div v-if="effect.colorMode === 'gradient'" class="designer-field designer-field--mt">
+                  <div class="designer-death-gradient">
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientFrom') }}</span>
+                      <input type="color" :value="effect.color" class="designer-color" @change="effect.color = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.color" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.color) }" placeholder="#ff0043" @change="emitCode" />
+                    </div>
+                    <div class="designer-death-gradient__row">
+                      <span class="designer-label">{{ t('visualDesigner.gradientTo') }}</span>
+                      <input type="color" :value="effect.colorTo" class="designer-color" @change="effect.colorTo = ($event.target as HTMLInputElement).value; emitCode()" />
+                      <input v-model="effect.colorTo" class="designer-input" :class="{ 'designer-input--error': !isHexValid(effect.colorTo) }" placeholder="#1e7fff" @change="emitCode" />
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- 通用物理参数（非 flash） -->
+              <template v-if="effect.type !== 'flash'">
+                <div class="designer-death-grid designer-death-grid--phys">
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.gravity') }}</label>
+                    <InputNumber v-model="effect.gravity" :min="0" :max="5" :step="0.1" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.fade') }}</label>
+                    <InputNumber v-model="effect.fade" :min="0" :max="2" :step="0.1" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.delay') }}</label>
+                    <InputNumber v-model="effect.delay" :min="0" :max="5000" :step="100" @change="emitCode" />
+                  </div>
+                  <div class="designer-field">
+                    <label class="designer-label">{{ t('visualDesigner.duration') }}</label>
+                    <InputNumber v-model="effect.duration" :min="0" :max="5000" :step="100" @change="emitCode" />
                   </div>
                 </div>
               </template>
@@ -358,6 +637,21 @@
           <button class="designer-death-add__btn" @click="addDeathEffect('flash')">Flash</button>
           <button class="designer-death-add__btn" @click="addDeathEffect('arc')">Arc</button>
           <button class="designer-death-add__btn" @click="addDeathEffect('spiral')">Spiral</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('ring')">Ring</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('wave')">Wave</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('heart')">Heart</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('star')">Star</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('cross')">Cross</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('snowflake')">Snowflake</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('flower')">Flower</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('square')">Square</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('triangle')">Triangle</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('arrow')">Arrow</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('rain')">Rain</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('vortex')">Vortex</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('fountain')">Fountain</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('galaxy')">Galaxy</button>
+          <button class="designer-death-add__btn" @click="addDeathEffect('text')">Text</button>
         </div>
       </div>
 
@@ -386,10 +680,13 @@ const props = defineProps<{
 const emit = defineEmits<{
   "update:modelValue": [value: string]
   "run-firework": [name: string]
+  "active-change": [index: number]
 }>()
 
 const showCode = ref(false)
 const activeIdx = ref(0)
+const dragIdx = ref(-1)
+const overIdx = ref(-1)
 
 const { t } = useI18n()
 
@@ -402,17 +699,25 @@ function isHexValid(val: string, allowEmpty = false): boolean {
 let _uid = 0
 function uid() { return `d_${++_uid}` }
 
-type DeathColorMode = "inherit" | "random" | "custom"
+type DeathColorMode = "inherit" | "random" | "custom" | "gradient"
 
-interface BurstDeath {
+interface DeathBase {
   id: string
-  type: "burst"
   enabled: boolean
+  gravity: number
+  fade: number
+  delay: number
+  duration: number
+}
+
+interface BurstDeath extends DeathBase {
+  type: "burst"
   count: number
   life: number
   speed: number
   colorMode: DeathColorMode
   color: string
+  colorTo: string
 }
 
 interface FlashDeath {
@@ -422,42 +727,161 @@ interface FlashDeath {
   radius: number
 }
 
-interface ArcDeath {
-  id: string
+interface ArcDeath extends DeathBase {
   type: "arc"
-  enabled: boolean
   count: number
   angle: number
   life: number
   colorMode: DeathColorMode
   color: string
+  colorTo: string
 }
 
-interface SpiralDeath {
-  id: string
+interface SpiralDeath extends DeathBase {
   type: "spiral"
-  enabled: boolean
   count: number
   turns: number
   life: number
   speed: number
   colorMode: DeathColorMode
   color: string
+  colorTo: string
 }
 
-type DeathEffect = BurstDeath | FlashDeath | ArcDeath | SpiralDeath
+interface RingDeath extends DeathBase {
+  type: "ring"
+  count: number
+  life: number
+  speed: number
+  colorMode: DeathColorMode
+  color: string
+  colorTo: string
+}
+
+interface WaveDeath extends DeathBase {
+  type: "wave"
+  count: number
+  waves: number
+  life: number
+  speed: number
+  colorMode: DeathColorMode
+  color: string
+  colorTo: string
+}
+
+interface HeartDeath extends DeathBase {
+  type: "heart"
+  count: number
+  life: number
+  speed: number
+  colorMode: DeathColorMode
+  color: string
+  colorTo: string
+}
+
+// 新增的 12 个 onDeath 动作，统一用一个通用类型承载（star/cross/snowflake/.../text）。
+type NewActionType = "star" | "cross" | "snowflake" | "flower" | "square" | "triangle" | "arrow" | "rain" | "vortex" | "fountain" | "galaxy" | "text"
+
+interface NewActionDeath extends DeathBase {
+  type: NewActionType
+  count: number
+  life: number
+  speed: number
+  colorMode: DeathColorMode
+  color: string
+  colorTo: string
+  param: number
+  text: string
+}
+
+type DeathEffect = BurstDeath | FlashDeath | ArcDeath | SpiralDeath | RingDeath | WaveDeath | HeartDeath | NewActionDeath
+
+interface NewActionMeta {
+  count: number
+  hasParam: boolean
+  param: number
+  paramMin: number
+  paramMax: number
+  paramStep: number
+  paramLabelKey: string | null
+  hasText: boolean
+}
+
+const NEW_ACTION_META: Record<NewActionType, NewActionMeta> = {
+  star: { count: 40, hasParam: true, param: 5, paramMin: 3, paramMax: 16, paramStep: 1, paramLabelKey: "visualDesigner.paramPoints", hasText: false },
+  cross: { count: 40, hasParam: false, param: 0, paramMin: 0, paramMax: 0, paramStep: 1, paramLabelKey: null, hasText: false },
+  snowflake: { count: 48, hasParam: true, param: 6, paramMin: 3, paramMax: 12, paramStep: 1, paramLabelKey: "visualDesigner.paramSpokes", hasText: false },
+  flower: { count: 48, hasParam: true, param: 6, paramMin: 3, paramMax: 16, paramStep: 1, paramLabelKey: "visualDesigner.paramPetals", hasText: false },
+  square: { count: 40, hasParam: false, param: 0, paramMin: 0, paramMax: 0, paramStep: 1, paramLabelKey: null, hasText: false },
+  triangle: { count: 36, hasParam: false, param: 0, paramMin: 0, paramMax: 0, paramStep: 1, paramLabelKey: null, hasText: false },
+  arrow: { count: 40, hasParam: false, param: 0, paramMin: 0, paramMax: 0, paramStep: 1, paramLabelKey: null, hasText: false },
+  rain: { count: 40, hasParam: false, param: 0, paramMin: 0, paramMax: 0, paramStep: 1, paramLabelKey: null, hasText: false },
+  vortex: { count: 48, hasParam: true, param: 2, paramMin: 0.1, paramMax: 10, paramStep: 0.5, paramLabelKey: "visualDesigner.paramTurns", hasText: false },
+  fountain: { count: 40, hasParam: false, param: 0, paramMin: 0, paramMax: 0, paramStep: 1, paramLabelKey: null, hasText: false },
+  galaxy: { count: 60, hasParam: true, param: 2, paramMin: 1, paramMax: 6, paramStep: 1, paramLabelKey: "visualDesigner.paramArms", hasText: false },
+  text: { count: 80, hasParam: false, param: 0, paramMin: 0, paramMax: 0, paramStep: 1, paramLabelKey: null, hasText: true },
+}
+
+const NEW_ACTION_TYPES = Object.keys(NEW_ACTION_META) as NewActionType[]
+
+function isNewActionType(type: string): type is NewActionType {
+  return NEW_ACTION_TYPES.includes(type as NewActionType)
+}
+
+function newActionMeta(type: string): NewActionMeta {
+  return NEW_ACTION_META[type as NewActionType] ?? NEW_ACTION_META.star
+}
+
+function newParamLabel(type: string): string {
+  const key = newActionMeta(type).paramLabelKey
+  return key ? t(key) : ""
+}
+
+function isNewActionEffect(effect: DeathEffect): effect is NewActionDeath {
+  return isNewActionType(effect.type)
+}
 
 function createBurstDeath(): BurstDeath {
-  return { id: uid(), type: "burst", enabled: true, count: 6, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043" }
+  return { id: uid(), type: "burst", enabled: true, count: 6, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043", colorTo: "#1e7fff", gravity: 0, fade: 0, delay: 0, duration: 0 }
 }
 function createFlashDeath(): FlashDeath {
   return { id: uid(), type: "flash", enabled: true, radius: 46 }
 }
 function createArcDeath(): ArcDeath {
-  return { id: uid(), type: "arc", enabled: true, count: 6, angle: 6.283, life: 600, colorMode: "inherit", color: "#ff0043" }
+  return { id: uid(), type: "arc", enabled: true, count: 6, angle: 6.283, life: 600, colorMode: "inherit", color: "#ff0043", colorTo: "#1e7fff", gravity: 0, fade: 0, delay: 0, duration: 0 }
 }
 function createSpiralDeath(): SpiralDeath {
-  return { id: uid(), type: "spiral", enabled: true, count: 16, turns: 1, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043" }
+  return { id: uid(), type: "spiral", enabled: true, count: 16, turns: 1, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043", colorTo: "#1e7fff", gravity: 0, fade: 0, delay: 0, duration: 0 }
+}
+function createRingDeath(): RingDeath {
+  return { id: uid(), type: "ring", enabled: true, count: 16, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043", colorTo: "#1e7fff", gravity: 0, fade: 0, delay: 0, duration: 0 }
+}
+function createWaveDeath(): WaveDeath {
+  return { id: uid(), type: "wave", enabled: true, count: 24, waves: 2, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043", colorTo: "#1e7fff", gravity: 0, fade: 0, delay: 0, duration: 0 }
+}
+function createHeartDeath(): HeartDeath {
+  return { id: uid(), type: "heart", enabled: true, count: 60, life: 600, speed: 1.0, colorMode: "inherit", color: "#ff0043", colorTo: "#1e7fff", gravity: 0, fade: 0, delay: 0, duration: 0 }
+}
+
+function createNewActionDeath(type: NewActionType): NewActionDeath {
+  const meta = NEW_ACTION_META[type]
+  return {
+    id: uid(),
+    type,
+    enabled: true,
+    count: meta.count,
+    life: 600,
+    speed: 1.0,
+    colorMode: "inherit",
+    color: "#ff0043",
+    colorTo: "#1e7fff",
+    param: meta.param,
+    text: "LOVE",
+    gravity: 0,
+    fade: 0,
+    delay: 0,
+    duration: 0,
+  }
 }
 
 interface DesignerForm {
@@ -586,10 +1010,20 @@ function formatColorExpr(f: DesignerForm): string {
   return f.color || "random"
 }
 
-function formatActionColor(mode: string, customColor: string): string {
-  if (mode === "inherit") return "inherit"
-  if (mode === "random") return "random"
-  return customColor || "#ff0043"
+function formatActionColor(effect: { colorMode: DeathColorMode; color: string; colorTo: string }): string {
+  if (effect.colorMode === "inherit") return "inherit"
+  if (effect.colorMode === "random") return "random"
+  if (effect.colorMode === "gradient") return `gradient(${effect.color || "#ff0043"}, ${effect.colorTo || "#1e7fff"})`
+  return effect.color || "#ff0043"
+}
+
+function physOpts(effect: DeathBase): string[] {
+  const o: string[] = []
+  if (effect.gravity !== 0) o.push(`gravity = ${effect.gravity}`)
+  if (effect.fade !== 0) o.push(`fade = ${effect.fade}`)
+  if (effect.delay !== 0) o.push(`delay = ${effect.delay}`)
+  if (effect.duration !== 0) o.push(`duration = ${effect.duration}`)
+  return o
 }
 
 function generateBlockCode(f: DesignerForm): string {
@@ -663,9 +1097,10 @@ function generateBlockCode(f: DesignerForm): string {
     for (const effect of f.deathEffects) {
       if (effect.type === "burst") {
         const opts: string[] = []
-        opts.push(`color = ${formatActionColor(effect.colorMode, effect.color)}`)
+        opts.push(`color = ${formatActionColor(effect)}`)
         if (effect.life !== 600) opts.push(`life = ${effect.life}`)
         if (effect.speed !== 1.0) opts.push(`speed = ${effect.speed}`)
+        opts.push(...physOpts(effect))
         lines.push(`${dd}burst ${effect.count} { ${opts.join(", ")} }`)
       } else if (effect.type === "flash") {
         if (effect.radius === 46) {
@@ -675,8 +1110,9 @@ function generateBlockCode(f: DesignerForm): string {
         }
       } else if (effect.type === "arc") {
         const opts: string[] = []
-        opts.push(`color = ${formatActionColor(effect.colorMode, effect.color)}`)
+        opts.push(`color = ${formatActionColor(effect)}`)
         if (effect.life !== 600) opts.push(`life = ${effect.life}`)
+        opts.push(...physOpts(effect))
         if (effect.angle === 6.283) {
           lines.push(`${dd}arc ${effect.count} { ${opts.join(", ")} }`)
         } else {
@@ -685,14 +1121,53 @@ function generateBlockCode(f: DesignerForm): string {
         }
       } else if (effect.type === "spiral") {
         const opts: string[] = []
-        opts.push(`color = ${formatActionColor(effect.colorMode, effect.color)}`)
+        opts.push(`color = ${formatActionColor(effect)}`)
         if (effect.life !== 600) opts.push(`life = ${effect.life}`)
         if (effect.speed !== 1.0) opts.push(`speed = ${effect.speed}`)
+        opts.push(...physOpts(effect))
         if (effect.turns === 1) {
           lines.push(`${dd}spiral ${effect.count} { ${opts.join(", ")} }`)
         } else {
           lines.push(`${dd}spiral ${effect.count} (${effect.turns}) { ${opts.join(", ")} }`)
         }
+      } else if (effect.type === "ring") {
+        const opts: string[] = []
+        opts.push(`color = ${formatActionColor(effect)}`)
+        if (effect.life !== 600) opts.push(`life = ${effect.life}`)
+        if (effect.speed !== 1.0) opts.push(`speed = ${effect.speed}`)
+        opts.push(...physOpts(effect))
+        lines.push(`${dd}ring ${effect.count} { ${opts.join(", ")} }`)
+      } else if (effect.type === "wave") {
+        const opts: string[] = []
+        opts.push(`color = ${formatActionColor(effect)}`)
+        if (effect.life !== 600) opts.push(`life = ${effect.life}`)
+        if (effect.speed !== 1.0) opts.push(`speed = ${effect.speed}`)
+        opts.push(...physOpts(effect))
+        if (effect.waves === 2) {
+          lines.push(`${dd}wave ${effect.count} { ${opts.join(", ")} }`)
+        } else {
+          lines.push(`${dd}wave ${effect.count} (${effect.waves}) { ${opts.join(", ")} }`)
+        }
+      } else if (effect.type === "heart") {
+        const opts: string[] = []
+        opts.push(`color = ${formatActionColor(effect)}`)
+        if (effect.life !== 600) opts.push(`life = ${effect.life}`)
+        if (effect.speed !== 1.0) opts.push(`speed = ${effect.speed}`)
+        opts.push(...physOpts(effect))
+        lines.push(`${dd}heart ${effect.count} { ${opts.join(", ")} }`)
+      } else if (isNewActionEffect(effect)) {
+        const meta = newActionMeta(effect.type)
+        const opts: string[] = []
+        opts.push(`color = ${formatActionColor(effect)}`)
+        if (effect.life !== 600) opts.push(`life = ${effect.life}`)
+        if (effect.speed !== 1.0) opts.push(`speed = ${effect.speed}`)
+        opts.push(...physOpts(effect))
+        const arg = meta.hasText
+          ? `("${effect.text || "LOVE"}")`
+          : meta.hasParam
+            ? `(${effect.param})`
+            : ""
+        lines.push(`${dd}${effect.type} ${effect.count}${arg ? ` ${arg}` : ""} { ${opts.join(", ")} }`)
       }
     }
 
@@ -723,7 +1198,11 @@ function emitCode() {
   emit("update:modelValue", generatedCode.value)
 }
 
-const DEATH_TYPE_LABELS: Record<string, string> = { burst: "Burst", flash: "Flash", arc: "Arc", spiral: "Spiral" }
+const DEATH_TYPE_LABELS: Record<string, string> = {
+  burst: "Burst", flash: "Flash", arc: "Arc", spiral: "Spiral", ring: "Ring", wave: "Wave", heart: "Heart",
+  star: "Star", cross: "Cross", snowflake: "Snowflake", flower: "Flower", square: "Square", triangle: "Triangle", arrow: "Arrow",
+  rain: "Rain", vortex: "Vortex", fountain: "Fountain", galaxy: "Galaxy", text: "Text",
+}
 function deathTypeLabel(type: string) {
   return DEATH_TYPE_LABELS[type] ?? type
 }
@@ -733,7 +1212,12 @@ function addDeathEffect(type: DeathEffect["type"]) {
   if (type === "burst") effect = createBurstDeath()
   else if (type === "flash") effect = createFlashDeath()
   else if (type === "arc") effect = createArcDeath()
-  else effect = createSpiralDeath()
+  else if (type === "spiral") effect = createSpiralDeath()
+  else if (type === "ring") effect = createRingDeath()
+  else if (type === "wave") effect = createWaveDeath()
+  else if (type === "heart") effect = createHeartDeath()
+  else if (isNewActionType(type)) effect = createNewActionDeath(type)
+  else effect = createHeartDeath()
   form.value.deathEffects.push(effect)
   emitCode()
 }
@@ -753,6 +1237,39 @@ function moveDeathEffect(idx: number, delta: number) {
   emitCode()
 }
 
+function onDeathDragStart(idx: number, e: DragEvent) {
+  dragIdx.value = idx
+  if (e.dataTransfer) {
+    e.dataTransfer.effectAllowed = "move"
+    e.dataTransfer.setData("text/plain", String(idx))
+  }
+}
+
+function onDeathDragOver(idx: number, e: DragEvent) {
+  e.preventDefault()
+  if (e.dataTransfer) e.dataTransfer.dropEffect = "move"
+  overIdx.value = idx
+}
+
+function onDeathDrop(idx: number, e: DragEvent) {
+  e.preventDefault()
+  const effects = form.value.deathEffects
+  const from = dragIdx.value
+  if (from < 0 || from === idx || from >= effects.length || idx >= effects.length) {
+    onDeathDragEnd()
+    return
+  }
+  const [moved] = effects.splice(from, 1)
+  effects.splice(idx, 0, moved)
+  onDeathDragEnd()
+  emitCode()
+}
+
+function onDeathDragEnd() {
+  dragIdx.value = -1
+  overIdx.value = -1
+}
+
 function arcAngleToStr(angle: number): string {
   if (angle === 6.283) return "full"
   if (angle === 3.1415) return "half"
@@ -763,11 +1280,36 @@ function strToArcAngle(val: string): number {
   return { full: 6.283, half: 3.1415, quarter: 1.5708 }[val] ?? 6.283
 }
 
-function parseDeathColor(raw: string, eff: BurstDeath | ArcDeath | SpiralDeath) {
+type ColorableDeath = Exclude<DeathEffect, FlashDeath>
+
+function parseDeathColor(raw: string, eff: ColorableDeath) {
   if (raw === "inherit") eff.colorMode = "inherit"
   else if (raw === "random") eff.colorMode = "random"
   else if (/^#[0-9a-fA-F]{6}$/.test(raw)) { eff.colorMode = "custom"; eff.color = raw }
   else eff.colorMode = "inherit"
+}
+
+function parseDeathColorFromOpts(opts: string, eff: ColorableDeath) {
+  const g = opts.match(/color\s*=\s*gradient\(\s*(#[0-9a-fA-F]{6})\s*,\s*(#[0-9a-fA-F]{6})\s*\)/)
+  if (g) {
+    eff.colorMode = "gradient"
+    eff.color = g[1]
+    eff.colorTo = g[2]
+    return
+  }
+  const m = opts.match(/color\s*=\s*(\w+|#[0-9a-fA-F]{6})/)
+  if (m) parseDeathColor(m[1], eff)
+}
+
+function parsePhysOpts(opts: string, eff: DeathBase) {
+  const g = opts.match(/gravity\s*=\s*([\d.]+)/)
+  if (g) eff.gravity = parseFloat(g[1])
+  const f = opts.match(/fade\s*=\s*([\d.]+)/)
+  if (f) eff.fade = parseFloat(f[1])
+  const d = opts.match(/delay\s*=\s*([\d.]+)/)
+  if (d) eff.delay = parseFloat(d[1])
+  const du = opts.match(/duration\s*=\s*([\d.]+)/)
+  if (du) eff.duration = parseFloat(du[1])
 }
 
 // ---- Parsing ----
@@ -898,8 +1440,8 @@ function parseBlockCode(blockCode: string, target: DesignerForm) {
           const bSpeed = opts.match(/speed\s*=\s*([\d.]+)/)
           if (bSpeed) eff.speed = parseFloat(bSpeed[1])
 
-          const bColor = opts.match(/color\s*=\s*(\w+|#[a-fA-F0-9]{6})/)
-          if (bColor) parseDeathColor(bColor[1], eff)
+          parseDeathColorFromOpts(opts, eff)
+          parsePhysOpts(opts, eff)
           target.deathEffects.push(eff)
         }
 
@@ -920,8 +1462,8 @@ function parseBlockCode(blockCode: string, target: DesignerForm) {
           const aLife = aOpts.match(/life\s*=\s*([\d.]+)/)
           if (aLife) eff.life = parseFloat(aLife[1])
 
-          const aColor = aOpts.match(/color\s*=\s*(\w+|#[a-fA-F0-9]{6})/)
-          if (aColor) parseDeathColor(aColor[1], eff)
+          parseDeathColorFromOpts(aOpts, eff)
+          parsePhysOpts(aOpts, eff)
           target.deathEffects.push(eff)
         }
 
@@ -938,8 +1480,89 @@ function parseBlockCode(blockCode: string, target: DesignerForm) {
           const sSpeed = sOpts.match(/speed\s*=\s*([\d.]+)/)
           if (sSpeed) eff.speed = parseFloat(sSpeed[1])
 
-          const sColor = sOpts.match(/color\s*=\s*(\w+|#[a-fA-F0-9]{6})/)
-          if (sColor) parseDeathColor(sColor[1], eff)
+          parseDeathColorFromOpts(sOpts, eff)
+          parsePhysOpts(sOpts, eff)
+          target.deathEffects.push(eff)
+        }
+
+        // ring
+        for (const m of body.matchAll(/ring\s+(\d+)\s*\{([^}]*)\}/g)) {
+          const eff = createRingDeath()
+          eff.count = parseInt(m[1])
+
+          const rOpts = m[2]
+          const rLife = rOpts.match(/life\s*=\s*([\d.]+)/)
+          if (rLife) eff.life = parseFloat(rLife[1])
+
+          const rSpeed = rOpts.match(/speed\s*=\s*([\d.]+)/)
+          if (rSpeed) eff.speed = parseFloat(rSpeed[1])
+
+          parseDeathColorFromOpts(rOpts, eff)
+          parsePhysOpts(rOpts, eff)
+          target.deathEffects.push(eff)
+        }
+
+        // wave
+        for (const m of body.matchAll(/wave\s+(\d+)(?:\s*\(([\d.]+)\))?\s*\{([^}]*)\}/g)) {
+          const eff = createWaveDeath()
+          eff.count = parseInt(m[1])
+          eff.waves = m[2] ? parseFloat(m[2]) : 2
+
+          const wOpts = m[3]
+          const wLife = wOpts.match(/life\s*=\s*([\d.]+)/)
+          if (wLife) eff.life = parseFloat(wLife[1])
+
+          const wSpeed = wOpts.match(/speed\s*=\s*([\d.]+)/)
+          if (wSpeed) eff.speed = parseFloat(wSpeed[1])
+
+          parseDeathColorFromOpts(wOpts, eff)
+          parsePhysOpts(wOpts, eff)
+          target.deathEffects.push(eff)
+        }
+
+        // heart
+        for (const m of body.matchAll(/heart\s+(\d+)\s*\{([^}]*)\}/g)) {
+          const eff = createHeartDeath()
+          eff.count = parseInt(m[1])
+
+          const hOpts = m[2]
+          const hLife = hOpts.match(/life\s*=\s*([\d.]+)/)
+          if (hLife) eff.life = parseFloat(hLife[1])
+
+          const hSpeed = hOpts.match(/speed\s*=\s*([\d.]+)/)
+          if (hSpeed) eff.speed = parseFloat(hSpeed[1])
+
+          parseDeathColorFromOpts(hOpts, eff)
+          parsePhysOpts(hOpts, eff)
+          target.deathEffects.push(eff)
+        }
+
+        // 新增动作：star / cross / snowflake / flower / square / triangle / arrow / rain / vortex / fountain / galaxy / text
+        const newActionRe = /\b(star|cross|snowflake|flower|square|triangle|arrow|rain|vortex|fountain|galaxy|text)\s+(\d+)(?:\s*\(([^)]*)\))?\s*\{([^}]*)\}/g
+        for (const m of body.matchAll(newActionRe)) {
+          const type = m[1] as NewActionType
+          const eff = createNewActionDeath(type)
+          eff.count = parseInt(m[2])
+
+          const arg = m[3] ?? ""
+          if (arg) {
+            if (type === "text") {
+              eff.text = arg.replace(/^["']|["']$/g, "")
+            } else {
+              const num = parseFloat(arg)
+              if (!Number.isNaN(num)) eff.param = num
+            }
+          }
+
+          const nOpts = m[4]
+          const nLife = nOpts.match(/life\s*=\s*([\d.]+)/)
+          if (nLife) eff.life = parseFloat(nLife[1])
+
+          const nSpeed = nOpts.match(/speed\s*=\s*([\d.]+)/)
+          if (nSpeed) eff.speed = parseFloat(nSpeed[1])
+
+          parseDeathColorFromOpts(nOpts, eff)
+          parsePhysOpts(nOpts, eff)
           target.deathEffects.push(eff)
         }
       }
@@ -1000,6 +1623,16 @@ watch(() => props.modelValue, (val) => {
   parseAllBlocks(val)
   lastParsedCode = val
 }, { immediate: true })
+
+watch(activeIdx, () => emit("active-change", activeIdx.value))
+
+function setActiveBlock(index: number) {
+  if (index >= 0 && index < blocks.length) {
+    activeIdx.value = index
+  }
+}
+
+defineExpose({ setActiveBlock })
 </script>
 
 <style scoped lang="scss">
@@ -1109,6 +1742,12 @@ watch(() => props.modelValue, (val) => {
   border: 1px solid #454545;
   border-radius: 4px;
   overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &--over {
+    border-color: #0e639c;
+    box-shadow: 0 0 0 1px rgba(14, 99, 156, 0.4);
+  }
 
   &__header {
     display: flex;
@@ -1117,6 +1756,22 @@ watch(() => props.modelValue, (val) => {
     padding: 4px 8px;
     background: #333;
     border-bottom: 1px solid #454545;
+  }
+
+  &__drag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #888;
+    cursor: grab;
+    user-select: none;
+    line-height: 1;
+
+    &:active {
+      cursor: grabbing;
+      color: #4fc1ff;
+    }
   }
 
   &__order {
@@ -1193,9 +1848,31 @@ watch(() => props.modelValue, (val) => {
   padding: 8px;
 }
 
+.designer-death-gradient {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .designer-label {
+      width: 44px;
+      flex-shrink: 0;
+    }
+
+    .designer-input {
+      flex: 1;
+    }
+  }
+}
+
 .designer-death-add {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 6px;
   padding: 8px 0 0;
 
@@ -1232,6 +1909,12 @@ watch(() => props.modelValue, (val) => {
   &--1 {
     grid-template-columns: 1fr;
     max-width: 120px;
+  }
+
+  &--phys {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #3c3c3c;
   }
 }
 

@@ -43,8 +43,8 @@
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from "vue"
 import { useI18n } from "vue-i18n"
 import {
-  Firework, shellNames, loadShellScript,
-  MAX_WIDTH, MAX_HEIGHT,
+  Firework, shellNames, loadShellScript, listBundledShells,
+  MAX_WIDTH, MAX_HEIGHT, DEFAULT_LAUNCH_PLAN,
 } from "../libs/firework-engine"
 import type { EngineConfig } from "../libs/firework-engine"
 import ControlPanel from "./ControlPanel.vue"
@@ -86,6 +86,7 @@ const config = reactive<EngineConfig>({
   fps: engine.state.config.fps,
   speed: engine.state.config.speed,
   debug: engine.state.config.debug,
+  launchPlan: { ...engine.state.config.launchPlan },
 })
 
 const shellRefreshKey = ref(0)
@@ -133,7 +134,7 @@ engine.subscribe((state, _prevState) => {
   fullscreen.value = state.fullscreen
   openHelpTopic.value = state.openHelpTopic
   const c = state.config
-  Object.assign(config, { quality: c.quality, shell: c.shell, size: c.size, autoLaunch: c.autoLaunch, finale: c.finale, skyLighting: c.skyLighting, hideControls: c.hideControls, longExposure: c.longExposure, scaleFactor: c.scaleFactor, renderer: c.renderer, fps: c.fps, speed: c.speed, debug: c.debug })
+  Object.assign(config, { quality: c.quality, shell: c.shell, size: c.size, autoLaunch: c.autoLaunch, finale: c.finale, skyLighting: c.skyLighting, hideControls: c.hideControls, longExposure: c.longExposure, scaleFactor: c.scaleFactor, renderer: c.renderer, fps: c.fps, speed: c.speed, debug: c.debug, launchPlan: c.launchPlan })
 })
 
 watch(() => config.renderer, (newVal) => {
@@ -148,7 +149,7 @@ function updateConfig(partial: Partial<EngineConfig>) {
 
 // ─── Settings Persistence ───
 const SETTINGS_KEY = "firework-settings"
-const persistKeys = ["quality", "shell", "size", "autoLaunch", "finale", "skyLighting", "hideControls", "longExposure", "scaleFactor", "renderer", "fps", "speed", "debug"] as const
+const persistKeys = ["quality", "shell", "size", "autoLaunch", "finale", "skyLighting", "hideControls", "longExposure", "scaleFactor", "renderer", "fps", "speed", "debug", "launchPlan"] as const
 
 // Load saved settings on mount
 try {
@@ -157,7 +158,10 @@ try {
     const parsed = JSON.parse(saved)
     const partial: Record<string, unknown> = {}
     for (const k of persistKeys) {
-      if (k in parsed) partial[k] = parsed[k]
+      if (k in parsed) {
+        if (k === "launchPlan") partial[k] = { ...DEFAULT_LAUNCH_PLAN, ...(parsed[k] as object) }
+        else partial[k] = parsed[k]
+      }
     }
     if (Object.keys(partial).length) {
       engine.setState({ config: { ...engine.state.config, ...partial } })
@@ -212,6 +216,29 @@ function loadShellFile(file?: File) {
   reader.readAsText(file)
 }
 
+// 自动加载 shell-script 目录下打包的所有 .shell 脚本（重名后加载者覆盖）。
+function loadBundledShells() {
+  const files = listBundledShells()
+  if (!files.length) return
+
+  let loadedCount = 0
+  let errorCount = 0
+  for (const file of files) {
+    const result = loadShellScript(file.content)
+    for (const name of result.shells) {
+      if (!shellNames.includes(name)) shellNames.push(name)
+      if (!customShellNames.value.includes(name)) customShellNames.value.push(name)
+    }
+    loadedCount += result.shells.length
+    errorCount += result.errors.length
+  }
+
+  if (loadedCount > 0) shellRefreshKey.value++
+  if (errorCount > 0) {
+    showToast(t('firework.toast.loadedWithErrors', { shellCount: loadedCount, errorCount }))
+  }
+}
+
 function computeStageSize(): { w: number; h: number } {
   const w = Math.min(window.innerWidth, MAX_WIDTH)
   const h = window.innerWidth <= 420 ? window.innerHeight : Math.min(window.innerHeight, MAX_HEIGHT)
@@ -258,6 +285,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 onMounted(async () => {
   engine.init()
+  loadBundledShells()
 
   const { w, h } = computeStageSize()
   stageWidth.value = w

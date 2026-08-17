@@ -1,5 +1,6 @@
 export { default as Firework } from "./core/firework"
-export type { EngineState, EngineConfig } from "./core/firework"
+export type { EngineState, EngineConfig, LaunchPlan } from "./core/firework"
+export { DEFAULT_LAUNCH_PLAN } from "./core/firework"
 export { default as Shell } from "./shell/shell"
 export { Star } from "./particles/star"
 export type { StarData } from "./particles/star"
@@ -14,6 +15,8 @@ export { parseShellScript } from "./shell/shell-parser"
 export type { ParsedShell, ShellParseError } from "./shell/shell-parser"
 export { loadShellScript } from "./shell/shell-loader"
 export type { ShellLoadResult } from "./shell/shell-loader"
+export { listBundledShells } from "./shell/bundled-shells"
+export type { BundledShell } from "./shell/bundled-shells"
 export {
   GRAVITY, PI_2, PI_HALF,
   QUALITY_LOW, QUALITY_NORMAL, QUALITY_HIGH,

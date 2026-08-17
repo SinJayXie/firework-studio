@@ -150,7 +150,19 @@ pistil = false
 | 值 | 可用于 | 含义 |
 |------|--------|------|
 | `random` | `color` | 随机选取颜色 |
-| `inherit` | `burst.color` / `arc.color` / `spiral.color` | 继承死亡星点自身的颜色 |
+| `inherit` | 动作的 `color` 选项 | 继承死亡星点自身的颜色 |
+
+### 表达式（仅 onDeath 动作选项）
+
+```
+life = random(400, 800)
+color = gradient(#ff0043, #1e7fff)
+```
+
+| 表达式 | 可用于 | 含义 |
+|--------|--------|------|
+| `random(a, b)` | 数值选项（`life` / `speed` / `delay` / `duration`） | 在 [a, b] 区间取随机数 |
+| `gradient(c1, c2)` | `color` | 沿粒子顺序从 c1 线性渐变到 c2 |
 
 ### 标识符
 
@@ -246,6 +258,20 @@ onDeath {
 
 > `onDeath` 块不允许为空，至少需要包含一个动作。
 
+### 动作级通用选项
+
+除 `flash` 外，所有动作都支持以下通用选项（写在 `{ }` 内，逗号分隔）：
+
+| 选项 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `color` | string / `inherit` / `gradient(c1, c2)` | `inherit` | — | 子粒子颜色。`inherit` 继承死亡星点颜色；`gradient(c1, c2)` 沿粒子顺序从 c1 渐变到 c2 |
+| `life` | number / `random(a, b)` | 600 | 100 – 3000 | 子粒子存活时间 (ms) |
+| `speed` | number / `random(a, b)` | 1.0 | 0.1 – 5 | 扩散速度倍率（`arc` 不支持） |
+| `gravity` | number | — | 0 – 5 | 子粒子重力倍率，覆盖全局 `gravity` |
+| `fade` | number | — | 0 – 2 | 子粒子空气阻力倍率，覆盖全局 `fade` |
+| `delay` | number / `random(a, b)` | 0 | 0 – 5000 | 动作延迟触发时间 (ms) |
+| `duration` | number / `random(a, b)` | 0 | 0 – 5000 | 粒子生成持续时长 (ms)，粒子在 duration 内依次生成 |
+
 ### 动作：burst — 圆形爆发
 
 ```
@@ -290,7 +316,7 @@ arc 数量 (弧度) { color = 颜色, life = 存活 }
 | `color` | string / `inherit` | `inherit` | 子粒子颜色 |
 | `life` | number | 600 | 子粒子存活时间 (ms) |
 
-> `arc` 只支持 `color` 与 `life` 两个选项，不支持 `speed`。
+> `arc` 不支持 `speed` 选项（扩散速度由引擎随机决定），其余通用选项均可用。
 
 简写：`arc 6`（全圆 6 粒子，全部默认值）。
 
@@ -311,6 +337,165 @@ spiral 数量 (圈数) { color = 颜色, life = 存活, speed = 速度 }
 | `speed` | number | 1.0 | 0.1 – 5 | 扩散速度倍率 |
 
 简写：`spiral 12`（1 圈 12 粒子，全部默认值）。
+
+### 动作：ring — 环形分布
+
+```
+ring 数量 { color = 颜色, life = 存活 }
+```
+
+子粒子均匀排列在一个圆环上：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 200 | 子粒子数量 |
+
+简写：`ring 24`（24 粒子圆环，全部默认值）。
+
+### 动作：wave — 波浪分布
+
+```
+wave 数量 (波数) { color = 颜色, life = 存活 }
+```
+
+子粒子沿正弦波排列：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 200 | 子粒子数量 |
+| `(波数)` | number | `2` | (0, 10] | 波浪起伏次数，可省略 |
+
+简写：`wave 32`（2 个波峰 32 粒子，全部默认值）。
+
+### 动作：heart — 心形分布
+
+```
+heart 数量 { color = 颜色, life = 存活 }
+```
+
+子粒子按心形曲线排列：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 200 | 子粒子数量 |
+
+简写：`heart 60`（60 粒子心形，全部默认值）。
+
+### 动作：star — 星形轮廓
+
+```
+star 数量 (尖角数) { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子沿星形轮廓均匀排列：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 200 | 子粒子数量 |
+| `(尖角数)` | number | `5` | [3, 16] | 星形尖角数，可省略 |
+
+简写：`star 40`（5 角星 40 粒子）。
+
+### 动作：cross — 十字轮廓
+
+```
+cross 数量 { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子沿十字轮廓排列。参数：`数量`（1 – 200）。
+
+### 动作：snowflake — 雪花
+
+```
+snowflake 数量 (辐条数) { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子沿雪花主干与分叉线段排列：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 200 | 子粒子数量 |
+| `(辐条数)` | number | `6` | [3, 12] | 雪花主干条数，可省略 |
+
+### 动作：flower — 花朵
+
+```
+flower 数量 (花瓣数) { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子按花瓣环状分布：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 200 | 子粒子数量 |
+| `(花瓣数)` | number | `6` | [3, 16] | 花瓣数量，可省略 |
+
+### 动作：square / triangle / arrow — 方形 / 三角 / 箭头
+
+```
+square 数量 { color = 颜色, life = 存活, speed = 速度 }
+triangle 数量 { color = 颜色, life = 存活, speed = 速度 }
+arrow 数量 { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子分别沿正方形、正三角形、箭头轮廓排列。参数：`数量`（1 – 200）。
+
+### 动作：rain — 下落雨滴
+
+```
+rain 数量 { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子横向分散并受重力下落，默认重力 `1.6`（可用 `gravity` 选项覆盖）。参数：`数量`（1 – 200）。
+
+### 动作：vortex — 漩涡
+
+```
+vortex 数量 (圈数) { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子从中心向外沿旋臂展开：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 200 | 子粒子数量 |
+| `(圈数)` | number | `2` | (0, 10] | 旋臂圈数，可省略 |
+
+### 动作：fountain — 喷泉
+
+```
+fountain 数量 { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子向上喷射并随机张开后受重力回落，默认重力 `1.8`。参数：`数量`（1 – 200）。
+
+### 动作：galaxy — 星系
+
+```
+galaxy 数量 (旋臂数) { color = 颜色, life = 存活, speed = 速度 }
+```
+
+子粒子沿多条旋臂螺旋分布：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 300 | 子粒子数量 |
+| `(旋臂数)` | number | `2` | [1, 6] | 旋臂数量，可省略 |
+
+### 动作：text — 点阵文字
+
+```
+text 数量 ("内容") { color = 颜色, life = 存活, speed = 速度 }
+```
+
+将字符串渲染为 5×7 点阵字形，子粒子按点阵网格排列：
+
+| 参数 | 类型 | 默认值 | 范围 | 说明 |
+|------|------|--------|------|------|
+| `数量` | number | 必填 | 1 – 400 | 子粒子数量 |
+| `("内容")` | string | `"LOVE"` | — | 显示文字，支持大写字母、数字与 `- . ! ? + &` |
+
+简写：`text 80 ("HI")`。
 
 ---
 
@@ -336,15 +521,30 @@ spiral 数量 (圈数) { color = 颜色, life = 存活, speed = 速度 }
 | 校验项 | 规则 |
 |--------|------|
 | 数值范围 | `size` 50–800、`life` 300–5000、`lifeVariation` 0–5、`density` 0.05–2、`starCount` 1–5000、`gravity` 0–5、`fade` 0–2、`launchHeight` 0–1 |
-| 动作数值范围 | `life` 100–3000、`speed` 0.1–5 |
+| 动作数值范围 | `life` 100–3000、`speed` 0.1–5、`gravity` 0–5、`fade` 0–2、`delay` 0–5000、`duration` 0–5000 |
 | `glitter` 枚举 | 仅 `light` / `medium` / `heavy` / `thick` / `streamer` / `willow` |
 | `color` | `random`、单个十六进制，或十六进制颜色数组 |
 | `secondColor` 等单色参数 | 仅接受单个十六进制，不支持数组或 `random` |
+| `gradient(c1, c2)` | 两个参数都必须为十六进制颜色 |
+| `random(a, b)` | 必须满足 `max >= min` |
 | `burst` 数量 | 必须为正数，建议 ≤ 50 |
 | `arc` 数量 | 必须为正数，建议 ≤ 100 |
 | `arc` 弧度 | 必须在 `(0, 2π]` 区间 |
 | `spiral` 数量 | 必须为正数，建议 ≤ 100 |
 | `spiral` 圈数 | 必须在 `(0, 10]` 区间 |
+| `ring` 数量 | 必须为正数，建议 ≤ 200 |
+| `wave` 数量 | 必须为正数，建议 ≤ 200 |
+| `wave` 波数 | 必须在 `(0, 10]` 区间 |
+| `heart` 数量 | 必须为正数，建议 ≤ 200 |
+| `star` / `cross` / `snowflake` / `flower` / `square` / `triangle` / `arrow` / `rain` / `fountain` 数量 | 必须为正数，建议 ≤ 200 |
+| `vortex` 数量 | 必须为正数，建议 ≤ 200 |
+| `galaxy` 数量 | 必须为正数，建议 ≤ 300 |
+| `text` 数量 | 必须为正数，建议 ≤ 400 |
+| `star` 尖角数 | 必须在 `[3, 16]` 区间 |
+| `snowflake` 辐条数 | 必须在 `[3, 12]` 区间 |
+| `flower` 花瓣数 | 必须在 `[3, 16]` 区间 |
+| `vortex` 圈数 | 必须在 `(0, 10]` 区间 |
+| `galaxy` 旋臂数 | 必须在 `[1, 6]` 区间 |
 | `flash` 半径 | 必须为正数，建议 ≤ 200 |
 | 属性名 | 未知属性、重复属性会报错 |
 | `onDeath` 块 | 不允许为空 |
@@ -357,11 +557,12 @@ spiral 数量 (圈数) { color = 颜色, life = 存活, speed = 速度 }
 内置 Monaco 编辑器为 `firework.shell` 提供了完整开发支持：
 
 - **语法高亮**：关键词、属性名、字符串、数字、颜色值、注释分别着色。
-- **智能补全**：在顶层、`firework` 块、`onDeath` 块、`burst`/`arc`/`spiral` 选项块内提供上下文相关的代码片段与取值建议。
+- **智能补全**：在顶层、`firework` 块、`onDeath` 块及各动作（`burst`/`flash`/`arc`/`spiral`/`ring`/`wave`/`heart` 及 `star`/`cross`/`snowflake`/`flower`/`square`/`triangle`/`arrow`/`rain`/`vortex`/`fountain`/`galaxy`/`text`）选项块内提供上下文相关的代码片段与取值建议。
 - **悬停说明**：悬停在属性名或值上显示类型与说明。
 - **CodeLens**：每个 `firework` 块顶部显示 `▶ 名称`，点击即可单独运行该烟花。
 - **格式化**：支持「格式化文档」，自动缩进（4 空格）、规范等号与逗号间距、折叠单行块。
 - **错误诊断**：解析错误实时标红，并通过错误对话框汇总展示。
+- **错误 QuickFix**：对常见错误（未知动作、空 `onDeath`、非法值、越界数值、非法颜色等）提供一键修复建议。
 
 ---
 
@@ -383,7 +584,10 @@ spiral 数量 (圈数) { color = 颜色, life = 存活, speed = 速度 }
 - **需要精确数量时用 `starCount`**：直接指定星点数，忽略 `density` 自动计算。
 - **用 `inherit` 保持颜色一致**：`onDeath` 子粒子使用 `inherit` 时，会继承死亡星点的颜色，视觉更统一。
 - **叠加热闹效果**：`burst` + `flash` + `arc` 可在同一 `onDeath` 内组合，营造丰富层次。
+- **组合造型动作**：`ring` / `wave` / `heart` 可生成圆环、波浪、心形等特定造型，适合做主题烟花。
+- **用 `gradient` 做渐变**：`color = gradient(#ff0043, #1e7fff)` 让子粒子依次渐变；配合 `delay` + `duration` 控制粒子生成时序，营造流动感。
 - **用 `spiral` 做旋转造型**：`spiral 16 (2)` 生成双圈螺旋，配合 `gravity` 可做回旋下落效果。
+- **用造型动作做主题**：`star` / `snowflake` / `flower` / `heart` / `text` 可生成星形、雪花、花朵、心形、文字等特定轮廓，适合节日主题。
 - **善用 CodeLens**：编辑器中点击 `▶` 快速预览单个烟花，无需运行整个脚本。
 
 ---
@@ -480,6 +684,64 @@ firework {
 ```
 
 > `spiral 16 (2)` 生成 2 圈 16 粒子的螺旋；`gravity = 1.2` 让星点下落更快，`fade = 0.8` 让空气阻力略弱。
+
+### 造型动作 + 渐变 + 时序
+
+```
+firework {
+    name = "心形告白"
+    size = 300
+    life = 1100
+    color = #ff0043
+
+    onDeath {
+        ring 32 { color = inherit, life = 500 }
+        wave 40 (3) { color = gradient(#14fc56, #1e7fff), life = 600, duration = 600 }
+        heart 60 { color = #ff6b81, life = 700, delay = 300, duration = 500 }
+    }
+}
+```
+
+> `ring` 圆环、`wave` 波浪、`heart` 心形可组合；`gradient` 让波浪粒子从绿到蓝渐变；`delay` + `duration` 控制心形在 300ms 后、500ms 内依次生成。
+
+### 造型动作：星星 / 雪花 / 文字
+
+```
+firework {
+    name = "星座盛典"
+    size = 320
+    life = 1200
+    color = #ffbf36
+
+    onDeath {
+        star 48 (5) { color = gradient(#ffbf36, #ffffff), life = 600 }
+        snowflake 60 (6) { color = #1e7fff, life = 700, delay = 200 }
+        text 90 ("STAR") { color = gradient(#ff0043, #ffbf36), life = 800, delay = 400 }
+    }
+}
+```
+
+> `star (5)` 生成五角星轮廓；`snowflake (6)` 生成六辐条雪花；`text ("STAR")` 将字符串渲染为点阵文字。三者通过 `delay` 依次触发，营造层层绽放的节奏。
+
+### 运动动作：漩涡 / 喷泉 / 星系 / 雨滴
+
+```
+firework {
+    name = "银河漩涡"
+    size = 340
+    life = 1500
+    color = #1e7fff
+
+    onDeath {
+        vortex 60 (3) { color = gradient(#1e7fff, #00ff88), life = 700, speed = 1.0 }
+        galaxy 80 (2) { color = gradient(#9933ff, #1e7fff), life = 800, delay = 300 }
+        fountain 50 { color = #ffffff, life = 600, delay = 500 }
+        rain 60 { color = #00ffcc, life = 700, delay = 700 }
+    }
+}
+```
+
+> `vortex (3)` 生成三圈漩涡；`galaxy (2)` 生成双旋臂星系；`fountain` 与 `rain` 受默认重力作用，分别向上喷涌与向下飘落。
 
 ### 多定义：一个文件多个烟花
 

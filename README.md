@@ -6,9 +6,10 @@
 
 - 烟花引擎：Canvas2D / WebGL 双渲染器，支持火花（glitter）、环形、花蕊、频闪、流束等丰富形态
 - 星点死亡特效：十字星（crossette）、噼啪（crackle）、花簇（floral）、落叶（fallingLeaves）
+- onDeath 造型动作：圆形爆发（burst）、爆闪（flash）、弧线（arc）、螺旋（spiral）、环形（ring）、波浪（wave）、心形（heart），支持渐变与粒子生成时序
 - 自定义脚本语言 `firework.shell`，声明式定义烟花效果
 - 可视化设计器与代码编辑器，支持实时调试
-- 内置 Monaco 编辑器，支持语法高亮、智能提示、悬停说明与错误诊断
+- 内置 Monaco 编辑器，支持语法高亮、智能提示、悬停说明、错误诊断与一键修复（QuickFix）
 - 中英文国际化
 
 ## 技术栈

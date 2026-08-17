@@ -1,0 +1,1666 @@
+// ==============================
+// 通用基础款烟花合集
+// ==============================
+// 1. 极简单色基础礼花
+firework {
+    name = "基础红礼炮"
+    size = 300
+    life = 900
+    density = 1.0
+    color = #ff2233
+    glitter = medium
+}
+
+// 2. 随机彩色基础礼花
+firework {
+    name = "彩虹随机礼花"
+    size = 320
+    life = 950
+    density = 1.1
+    color = random
+    glitter = light
+    pistil = true
+}
+
+// 3. 双色渐变基础款
+firework {
+    name = "粉紫渐变礼花"
+    size = 290
+    life = 1000
+    density = 0.9
+    color = #ff55aa
+    secondColor = #8833ff
+    glitter = medium
+}
+
+// ==============================
+// 环形系列烟花 ring 形态
+// ==============================
+// 4. 单环银光
+firework {
+    name = "银白单环"
+    size = 350
+    life = 1000
+    density = 1.0
+    color = #ffffff
+    ring = true
+    glitter = thick
+    onDeath {
+        burst 10 { life = random(300, 500) }
+        flash(25)
+    }
+}
+
+// 5. 内外双环花蕊款
+firework {
+    name = "七彩双环"
+    size = 380
+    life = 1100
+    color = [#ff3344, #33ee77, #3399ff]
+    ring = true
+    pistil = true
+    pistilColor = #ffff33
+    glitter = heavy
+    onDeath {
+        arc 12 (6.283) { life = 450 }
+        flash(32)
+    }
+}
+
+// ==============================
+// 垂柳/流星雨 willow 拖尾系列
+// ==============================
+// 6. 金色流星雨
+firework {
+    name = "金色流星雨"
+    size = 200
+    life = 2800
+    density = 0.45
+    color = #ffcc44
+    glitter = willow
+    gravity = 1.3
+    fallingLeaves = true
+}
+
+// 7. 蓝紫垂柳
+firework {
+    name = "星河垂柳"
+    size = 240
+    life = 3200
+    density = 0.5
+    color = #4444ff
+    secondColor = #bb33ff
+    glitter = willow
+    gravity = 1.2
+    onDeath {
+        burst 5 { speed = 0.6, life = random(600, 900) }
+    }
+}
+
+// 8. 细流束银线流星
+firework {
+    name = "银线流束"
+    size = 260
+    life = 1800
+    density = 0.6
+    color = #f0f8ff
+    glitter = streamer
+    streamers = true
+}
+
+// ==============================
+// 螺旋 spiral 旋转特效烟花
+// ==============================
+// 9. 单圈蓝螺旋星云
+firework {
+    name = "单圈蓝螺旋"
+    size = 300
+    life = 1300
+    color = #2299ff
+    gravity = 1.1
+    fade = 0.85
+    onDeath {
+        spiral 16 (1) { life = 650, speed = 1.1 }
+        flash(40)
+    }
+}
+
+// 10. 双圈粉金螺旋
+firework {
+    name = "双圈粉金螺旋"
+    size = 330
+    life = 1400
+    color = #ff6699
+    glitter = light
+    onDeath {
+        spiral 22 (2) { color = gradient(#ff6699, #ffdd44), life = 700 }
+        burst 8 { speed = 0.8 }
+    }
+}
+
+// ==============================
+// 心形 heart 告白浪漫系列
+// ==============================
+// 11. 单层红心告白
+firework {
+    name = "单层爱心烟花"
+    size = 280
+    life = 1000
+    color = #ff2255
+    onDeath {
+        heart 60 { life = 700 }
+        flash(30)
+    }
+}
+
+// 12. 多层渐变爱心组合
+firework {
+    name = "渐变多层爱心"
+    size = 320
+    life = 1200
+    color = #ff4477
+    glitter = medium
+    onDeath {
+        ring 28 { life = 500 }
+        wave 36 (3) { color = gradient(#44ffaa, #2299ff), duration = 600 }
+        heart 72 { color = #ff88aa, delay = 300, duration = 550 }
+        flash(45)
+    }
+}
+
+// ==============================
+// 波浪 wave 动态流动烟花
+// ==============================
+// 13. 三色波浪星云
+firework {
+    name = "三色波浪星云"
+    size = 340
+    life = 1150
+    color = [#22ee99, #22aaff, #ff44bb]
+    glitter = light
+    onDeath {
+        wave 44 (4) { color = gradient(#11ee88, #ff33aa), life = 650, duration = 700 }
+        burst 12 { speed = random(0.5, 1.2) }
+    }
+}
+
+// ==============================
+// 频闪 strobe 闪光特效烟花
+// ==============================
+// 14. 白闪霓虹弹
+firework {
+    name = "纯白频闪霓虹弹"
+    size = 270
+    life = 1100
+    color = [#ff3355, #33bbff, #ffee33]
+    glitter = heavy
+    strobe = true
+    strobeColor = #ffffff
+    onDeath {
+        burst 7 { life = 480, speed = 0.7 }
+        flash(38)
+    }
+}
+
+// ==============================
+// 噼啪/十字/花簇内置特效款
+// ==============================
+// 15. 噼啪金色流星
+firework {
+    name = "噼啪金闪流星"
+    size = 330
+    life = 920
+    color = #ffcc33
+    crackle = true
+    onDeath {
+        flash(32)
+        arc 8 (Math.PI) { life = 420 }
+    }
+}
+
+// 16. 十字分裂花簇
+firework {
+    name = "十字花簇礼花"
+    size = 360
+    life = 1050
+    color = #33ff88
+    crossette = true
+    floral = true
+    glitter = thick
+    onDeath {
+        burst 14 { speed = 1.2 }
+    }
+}
+
+// 17. 落叶十字多特效叠加
+firework {
+    name = "落叶十字礼花"
+    size = 310
+    life = 1300
+    color = #ffaa22
+    crossette = true
+    crackle = true
+    fallingLeaves = true
+    glitter = willow
+}
+
+// ==============================
+// 马尾 horsetail 上升轨迹烟花
+// ==============================
+// 18. 蓝马尾升空礼花
+firework {
+    name = "蓝马尾升空弹"
+    size = 260
+    life = 1200
+    density = 0.85
+    color = #1177ff
+    horsetail = true
+    glitter = streamer
+    launchHeight = 0.9
+    onDeath {
+        ring 20 { life = 550 }
+    }
+}
+
+// ==============================
+// 大尺寸豪华压轴烟花
+// ==============================
+// 19. 超大压轴综合礼花
+firework {
+    name = "年度压轴大烟花"
+    size = 750
+    life = 1600
+    density = 0.7
+    color = [#ff2244, #ffdd33, #33ee88, #3399ff, #bb44ff]
+    ring = true
+    pistil = true
+    streamers = true
+    strobe = true
+    strobeColor = #ffffff
+    crackle = true
+    floral = true
+    gravity = 0.9
+    fade = 1.1
+    onDeath {
+        burst 20 { life = random(500, 800), speed = random(0.6, 1.4) }
+        arc 18 (6.283) { color = gradient(#ff2244, #3399ff), life = 600 }
+        spiral 24 (3) { speed = 0.9 }
+        wave 50 (5) { duration = 800 }
+        heart 80 { delay = 400, duration = 600 }
+        flash(60)
+    }
+}
+
+// ==============================
+// 低空小型手持小烟花
+// ==============================
+// 20. 低空手持小彩花
+firework {
+    name = "手持小彩花"
+    size = 120
+    life = 500
+    density = 1.3
+    color = random
+    glitter = light
+    launchHeight = 0.1
+    gravity = 2
+    onDeath {
+        burst 4 { life = 200 }
+        flash(15)
+    }
+}
+
+// ==============================
+// 无重力太空梦幻烟花
+// ==============================
+// 21. 无重力太空星云
+firework {
+    name = "太空无重力星云"
+    size = 420
+    life = 2200
+    density = 0.65
+    color = [#9933ff, #33ccff, #ff44bb]
+    gravity = 0
+    fade = 0.3
+    glitter = thick
+    onDeath {
+        spiral 30 (4) { life = random(900, 1400) }
+        arc 24 (6.283) { color = gradient(#9933ff, #ff44bb) }
+        flash(50)
+    }
+}
+
+// ==============================
+// 浓密厚尾金色大礼花
+// ==============================
+// 22. 金厚尾华丽礼炮
+firework {
+    name = "金厚尾华丽礼炮"
+    size = 370
+    life = 1300
+    density = 0.95
+    color = #ffdd22
+    glitter = thick
+    glitterColor = #ffffff
+    pistil = true
+    pistilColor = #ff2222
+    crackle = true
+    onDeath {
+        burst 12 { speed = 1.3 }
+        flash(36)
+    }
+}
+
+// ==============================================
+// 【新增1】国风传统节日系列（春节/元宵/中秋）
+// ==============================================
+// 23. 中国红年花
+firework {
+    name = "新春红锦"
+    size = 360
+    life = 1050
+    density = 1.0
+    color = [#dd0000, #ffdd00]
+    glitter = medium
+    pistil = true
+    pistilColor = #ffffff
+    crossette = true
+    onDeath {
+        arc 10 (6.283) { color = gradient(#dd0000, #ffdd00), life = 500 }
+        flash(30)
+    }
+}
+
+// 24. 中秋皓月银花
+firework {
+    name = "中秋皓月"
+    size = 400
+    life = 1400
+    density = 0.8
+    color = #f8f8ff
+    secondColor = #cce8ff
+    ring = true
+    glitter = willow
+    fallingLeaves = true
+    gravity = 1.1
+    onDeath {
+        ring 36 { life = 600 }
+        burst 6 { speed = random(0.4, 0.9) }
+        flash(50)
+    }
+}
+
+// 25. 元宵金绣球
+firework {
+    name = "元宵金绣球"
+    size = 330
+    life = 950
+    color = #ffd700
+    glitter = heavy
+    floral = true
+    crackle = true
+    onDeath {
+        burst 16 { life = random(400, 600) }
+        flash(35)
+    }
+}
+
+// ==============================================
+// 【新增2】渐变双色过渡单花（secondColor专项）
+// ==============================================
+// 26. 橙紫落日渐变
+firework {
+    name = "落日橙紫"
+    size = 290
+    life = 1100
+    density = 0.9
+    color = #ff7722
+    secondColor = #7722dd
+    glitter = light
+    onDeath {
+        wave 30 (2) { life = 550 }
+        flash(22)
+    }
+}
+
+// 27. 青蓝深海渐变
+firework {
+    name = "深海青蓝"
+    size = 310
+    life = 1200
+    color = #00cc99
+    secondColor = #0066ff
+    glitter = streamer
+    streamers = true
+    onDeath {
+        spiral 14 (1) { speed = 1.0 }
+    }
+}
+
+// ==============================================
+// 【新增3】纯线条流束特效（streamer专项）
+// ==============================================
+// 28. 多色直线流束弹
+firework {
+    name = "彩虹流束"
+    size = 350
+    life = 1300
+    color = [#ff2266, #ffdd00, #22ee66, #22aaff]
+    glitter = streamer
+    streamers = true
+    gravity = 0.8
+    fade = 1.3
+    onDeath {
+        arc 12 (Math.PI) { life = 700 }
+    }
+}
+
+// 29. 银白极速长线
+firework {
+    name = "极速银线"
+    size = 270
+    life = 1000
+    color = #ffffff
+    glitter = streamer
+    onDeath {
+        burst 8 { speed = 1.8, life = 350 }
+        flash(20)
+    }
+}
+
+// ==============================================
+// 【新增4】全模式浓密厚尾 thick 重型烟花
+// ==============================================
+// 30. 紫金厚尾大花
+firework {
+    name = "紫金厚尾礼花"
+    size = 420
+    life = 1500
+    density = 0.75
+    color = #9922ff
+    glitter = thick
+    glitterColor = #ffdd44
+    ring = true
+    gravity = 1.0
+    onDeath {
+        spiral 20 (2) { color = inherit, life = 750 }
+        flash(48)
+    }
+}
+
+// ==============================================
+// 【新增5】高重力下坠快落特效
+// ==============================================
+// 31. 极速下坠金雨
+firework {
+    name = "极速落金"
+    size = 230
+    life = 1800
+    density = 0.55
+    color = #ffc830
+    glitter = willow
+    gravity = 3.2
+    fallingLeaves = true
+    onDeath {
+        burst 5 { gravity = 4 }
+    }
+}
+
+// 32. 高重力红坠星
+firework {
+    name = "赤红坠星"
+    size = 210
+    life = 1500
+    color = #ff1133
+    glitter = medium
+    gravity = 2.8
+    onDeath {
+        arc 4 (6.283) { life = random(300, 450) }
+    }
+}
+
+// ==============================================
+// 【新增6】低阻力飘逸星云 fade<1
+// ==============================================
+// 33. 飘逸粉星云
+firework {
+    name = "柔粉星云"
+    size = 380
+    life = 1600
+    density = 0.7
+    color = #ff88bb
+    fade = 0.4
+    gravity = 0.6
+    glitter = light
+    onDeath {
+        wave 42 (4) { duration = 900 }
+        flash(42)
+    }
+}
+
+// ==============================================
+// 【新增7】高空大型礼花 launchHeight=1
+// ==============================================
+// 34. 高空彩虹巨环
+firework {
+    name = "高空彩虹巨环"
+    size = 680
+    life = 1700
+    density = 0.6
+    color = [#ff3333, #ffaa22, #ffff33, #33ee66, #22aaff, #9933ff]
+    ring = true
+    pistil = true
+    launchHeight = 1
+    strobe = true
+    strobeColor = #ffffff
+    onDeath {
+        arc 24 (6.283) { life = 800, color = inherit }
+        flash(55)
+    }
+}
+
+// ==============================================
+// 【新增8】低空近景炸花 launchHeight=0.2以内
+// ==============================================
+// 35. 低空近距离彩爆
+firework {
+    name = "低空近炸彩花"
+    size = 180
+    life = 700
+    density = 1.4
+    color = random
+    launchHeight = 0.15
+    gravity = 2.2
+    onDeath {
+        burst 10 { life = random(250, 400) }
+        flash(28)
+    }
+}
+
+// ==============================================
+// 【新增9】纯造型无火花（glitter不填）
+// ==============================================
+// 36. 纯色极简爱心环
+firework {
+    name = "极简爱心环"
+    size = 260
+    life = 900
+    density = 1.0
+    color = #ff4466
+    onDeath {
+        ring 24 { life = 450 }
+        heart 50 { delay = 200, duration = 400 }
+        flash(26)
+    }
+}
+
+// 37. 极简波浪螺旋组合
+firework {
+    name = "极简波浪螺旋"
+    size = 300
+    life = 1000
+    color = #22ccff
+    onDeath {
+        spiral 12 (1) { life = 500 }
+        wave 32 (3) { life = 550 }
+    }
+}
+
+// ==============================================
+// 【新增10】多内置特效四层叠加款
+// crossette + crackle + floral + fallingLeaves 全开
+// ==============================================
+// 38. 四效合一黄金礼花
+firework {
+    name = "四效黄金礼花"
+    size = 340
+    life = 1200
+    color = #ffd020
+    glitter = heavy
+    crossette = true
+    crackle = true
+    floral = true
+    fallingLeaves = true
+    onDeath {
+        burst 12 { speed = random(0.7, 1.3) }
+        flash(40)
+    }
+}
+
+// ==============================================
+// 【新增11】半圆弧形专项 arc(Math.PI)
+// ==============================================
+// 39. 上半圆彩虹拱
+firework {
+    name = "彩虹半圆拱"
+    size = 320
+    life = 1100
+    color = [#ff2222, #ffdd00, #22ee77, #2288ff]
+    glitter = medium
+    onDeath {
+        arc 16 (Math.PI) { color = gradient(#ff2222, #2288ff), life = 600 }
+        flash(32)
+    }
+}
+
+// ==============================================
+// 【新增12】时序延迟分层特效 delay+duration 高级流动
+// ==============================================
+// 40. 分层时序星云
+firework {
+    name = "时序分层星云"
+    size = 360
+    life = 1400
+    color = #7733ff
+    glitter = light
+    onDeath {
+        ring 20 { life = 400 }
+        wave 36 (3) { delay = 200, duration = 500, life = 600 }
+        spiral 18 (2) { delay = 450, duration = 600, color = gradient(#7733ff, #ff44aa) }
+        heart 64 { delay = 700, duration = 700, life = 800 }
+        flash(52)
+    }
+}
+
+// ==============================================
+// 【新增13】马尾高空升空组合 horsetail全套
+// ==============================================
+// 41. 金红马尾升空大花
+firework {
+    name = "金红马尾升空弹"
+    size = 300
+    life = 1300
+    density = 0.9
+    color = #ff2233
+    secondColor = #ffdd00
+    horsetail = true
+    glitter = thick
+    launchHeight = 0.95
+    strobe = true
+    strobeColor = #ffffff
+    onDeath {
+        arc 14 (6.283) { life = 650 }
+        flash(44)
+    }
+}
+
+// ==============================================
+// 【新增14】固定星点数量 starCount 精准粒子控制
+// ==============================================
+// 42. 精准200星点蓝环
+firework {
+    name = "精准200星蓝环"
+    size = 320
+    life = 1000
+    starCount = 200
+    color = #1188ff
+    ring = true
+    glitter = light
+    onDeath {
+        burst 8 { life = 400 }
+    }
+}
+
+// 43. 精准80星垂柳
+firework {
+    name = "精准80星垂柳"
+    size = 240
+    life = 2600
+    starCount = 80
+    color = #ffbb33
+    glitter = willow
+    gravity = 1.2
+    onDeath {
+        flash(24)
+    }
+}
+
+// ==============================================
+// 【新增15】随机生命浮动 lifeVariation 动感款
+// ==============================================
+// 44. 长短星点浮动礼花
+firework {
+    name = "浮动彩星礼花"
+    size = 310
+    life = 1000
+    lifeVariation = 1.2
+    density = 1.0
+    color = [#ff5588, #33ddff]
+    glitter = medium
+    onDeath {
+        wave 30 (2) { life = random(300, 700) }
+        flash(28)
+    }
+}
+
+// ==============================================
+// 【新增16】无火花纯频闪造型花
+// ==============================================
+// 45. 纯白频闪爱心环
+firework {
+    name = "纯白频闪爱心环"
+    size = 280
+    life = 1200
+    color = #fefefe
+    strobe = true
+    strobeColor = #ffdd00
+    ring = true
+    onDeath {
+        ring 26 { life = 520 }
+        heart 56 { delay = 250 }
+        flash(36)
+    }
+}
+
+// ==============================================
+// 【新增17】小尺寸手持噼啪款
+// ==============================================
+// 46. 手持噼啪小金花
+firework {
+    name = "手持噼啪小金花"
+    size = 100
+    life = 450
+    density = 1.5
+    color = #ffcc22
+    crackle = true
+    launchHeight = 0.08
+    gravity = 3
+    onDeath {
+        flash(12)
+        burst 3 { life = 180 }
+    }
+}
+
+// ==============================================
+// 【新增18】超大型无重力宇宙压轴
+// ==============================================
+// 47. 宇宙星云终极压轴
+firework {
+    name = "宇宙星云终极压轴"
+    size = 780
+    life = 2400
+    density = 0.6
+    color = [#220066, #7722dd, #dd2299, #ff4466]
+    gravity = 0
+    fade = 0.2
+    ring = true
+    pistil = true
+    streamers = true
+    crossette = true
+    floral = true
+    onDeath {
+        spiral 32 (4) { life = random(800, 1500), speed = random(0.8, 1.4) }
+        arc 28 (6.283) { color = gradient(#220066, #ff4466) }
+        wave 56 (6) { duration = 1000 }
+        heart 90 { delay = 500, duration = 800 }
+        burst 24 { life = random(600, 1000) }
+        flash(70)
+    }
+}
+
+// ==============================================
+// 48. 赛博青蓝脉冲弹｜Strobe+Streamer 科技线条
+// ==============================================
+firework {
+    name = "赛博青蓝脉冲弹"
+    size = 310
+    life = 1150
+    density = 0.9
+    color = #00eaff
+    secondColor = #2244ff
+    glitter = streamer
+    strobe = true
+    strobeColor = #ffffff
+    fade = 0.7
+    gravity = 0.8
+    onDeath {
+        burst 9 { speed = random(1.1, 1.8), life = random(350, 600) }
+        flash(33)
+    }
+}
+
+// ==============================================
+// 49. 森系绿柳小花｜Willow低密柔和款
+// ==============================================
+firework {
+    name = "森系绿柳小花"
+    size = 220
+    life = 2100
+    density = 0.42
+    color = #39cc66
+    glitter = willow
+    fallingLeaves = true
+    gravity = 1.15
+    onDeath {
+        arc 5 (6.283) { life = 480 }
+    }
+}
+
+// ==============================================
+// 50. 白金银细环｜单ring无花蕊极简
+// ==============================================
+firework {
+    name = "白金银细环"
+    size = 290
+    life = 920
+    starCount = 130
+    color = #fcfcfc
+    glitter = light
+    ring = true
+    onDeath {
+        ring 22 { life = 420 }
+        flash(21)
+    }
+}
+
+// ==============================================
+// 51. 橘红噼啪十字花｜crossette+crackle双特效
+// ==============================================
+firework {
+    name = "橘红噼啪十字花"
+    size = 330
+    life = 980
+    color = #ff7722
+    crossette = true
+    crackle = true
+    glitter = medium
+    onDeath {
+        burst 11 { life = random(320, 530) }
+    }
+}
+
+// ==============================================
+// 52. 紫粉渐变波浪流｜wave长时序流动
+// ==============================================
+firework {
+    name = "紫粉渐变波浪流"
+    size = 350
+    life = 1350
+    color = #dd44ff
+    secondColor = #ff66aa
+    glitter = light
+    onDeath {
+        wave 46 (5) { color = gradient(#dd44ff, #ff66aa), duration = 750, life = 680 }
+        flash(38)
+    }
+}
+
+// ==============================================
+// 53. 高空迷你螺旋星｜小尺寸spiral高空款
+// ==============================================
+firework {
+    name = "高空迷你螺旋星"
+    size = 250
+    life = 1250
+    launchHeight = 0.92
+    color = #ffdd00
+    glitter = streamer
+    onDeath {
+        spiral 14 (1) { speed = 1.2, life = 560 }
+    }
+}
+
+// ==============================================
+// 54. 深海蓝厚重拖尾｜thick高密度重型
+// ==============================================
+firework {
+    name = "深海蓝厚重拖尾"
+    size = 380
+    life = 1450
+    density = 0.82
+    color = #003399
+    glitter = thick
+    glitterColor = #88ddff
+    ring = true
+    gravity = 0.95
+    onDeath {
+        arc 14 (6.283) { life = 620 }
+        flash(42)
+    }
+}
+
+// ==============================================
+// 55. 婚礼纯白告白心｜纯白心形双层
+// ==============================================
+firework {
+    name = "婚礼纯白告白心"
+    size = 300
+    life = 1100
+    color = #ffffff
+    pistil = true
+    pistilColor = #ffeef8
+    onDeath {
+        ring 30 { life = 480 }
+        heart 66 { delay = 220, duration = 520, color = #ffeef8 }
+        flash(40)
+    }
+}
+
+// ==============================================
+// 56. 低空橘黄手持噼啪｜极小尺寸高重力
+// ==============================================
+firework {
+    name = "低空橘黄手持噼啪"
+    size = 90
+    life = 420
+    density = 1.6
+    color = #ffaa33
+    crackle = true
+    launchHeight = 0.06
+    gravity = 3.4
+    onDeath {
+        flash(10)
+        burst 2 { life = 160 }
+    }
+}
+
+// ==============================================
+// 57. 无重力彩虹螺旋宇宙｜多色spiral四圈
+// ==============================================
+firework {
+    name = "无重力彩虹螺旋宇宙"
+    size = 440
+    life = 2300
+    density = 0.62
+    color = [#ff2233, #ffdd22, #33ee77, #22aaff, #aa33ff]
+    gravity = 0
+    fade = 0.25
+    onDeath {
+        spiral 34 (4) { color = gradient(#ff2233, #aa33ff), life = random(900, 1400) }
+        flash(58)
+    }
+}
+
+// ==============================================
+// 58. 金白马尾升空环｜horsetail+ring组合
+// ==============================================
+firework {
+    name = "金白马尾升空环"
+    size = 280
+    life = 1280
+    color = #ffdd22
+    secondColor = #ffffff
+    horsetail = true
+    ring = true
+    glitter = heavy
+    launchHeight = 0.88
+    onDeath {
+        arc 12 (Math.PI) { life = 540 }
+        flash(36)
+    }
+}
+
+// ==============================================
+// 59. 淡粉落叶花簇｜floral+fallingLeaves双内置特效
+// ==============================================
+firework {
+    name = "淡粉落叶花簇"
+    size = 320
+    life = 1320
+    color = #ffb8d0
+    floral = true
+    fallingLeaves = true
+    glitter = willow
+    gravity = 1.2
+    onDeath {
+        burst 7 { speed = 0.7 }
+    }
+}
+
+// ==============================================
+// 60. 随机彩虹频闪弹｜color=random全屏闪烁
+// ==============================================
+firework {
+    name = "随机彩虹频闪弹"
+    size = 270
+    life = 1080
+    color = random
+    glitter = medium
+    strobe = true
+    strobeColor = #ffffff
+    onDeath {
+        wave 34 (3) { life = 520 }
+        flash(30)
+    }
+}
+
+// ==============================================
+// 61. 青金半圆拱门｜arc(Math.PI)单层拱造型
+// ==============================================
+firework {
+    name = "青金半圆拱门"
+    size = 340
+    life = 1120
+    color = #22ddaa
+    glitter = light
+    onDeath {
+        arc 18 (Math.PI) { color = gradient(#22ddaa, #ffdd22), life = 580 }
+        flash(34)
+    }
+}
+
+// ==============================================
+// 62. 精准50星金色垂柳｜starCount固定粒子
+// ==============================================
+firework {
+    name = "精准50星金色垂柳"
+    size = 200
+    life = 2400
+    starCount = 50
+    color = #ffc020
+    glitter = willow
+    gravity = 1.3
+    onDeath {
+        flash(20)
+    }
+}
+
+// ==============================================
+// 63. 高阻力慢速紫星云｜fade=2满阻力飘逸
+// ==============================================
+firework {
+    name = "高阻力慢速紫星云"
+    size = 360
+    life = 1550
+    density = 0.72
+    color = #8822dd
+    fade = 2
+    gravity = 0.7
+    glitter = light
+    onDeath {
+        ring 34 { life = 640 }
+        spiral 16 (1) { delay = 280 }
+    }
+}
+
+// ==============================================
+// 64. 新年福字红金大花｜多层复合压轴小型
+// ==============================================
+firework {
+    name = "新年福字红金大花"
+    size = 400
+    life = 1220
+    color = [#dd0000, #ffd000]
+    ring = true
+    pistil = true
+    streamers = true
+    crossette = true
+    glitter = heavy
+    onDeath {
+        burst 15 { life = random(420, 650) }
+        arc 16 (6.283) { color = gradient(#dd0000, #ffd000) }
+        flash(46)
+    }
+}
+
+// ==============================================
+// 65. 薄荷绿极简爱心｜无glitter纯造型
+// ==============================================
+firework {
+    name = "薄荷绿极简爱心"
+    size = 250
+    life = 880
+    color = #66eebb
+    onDeath {
+        heart 52 { life = 460 }
+        flash(24)
+    }
+}
+
+// ==============================================
+// 66. 极速下坠紫流星｜gravity=4满重力下坠
+// ==============================================
+firework {
+    name = "极速下坠紫流星"
+    size = 210
+    life = 1600
+    density = 0.52
+    color = #9922ff
+    glitter = willow
+    gravity = 4
+    onDeath {
+        burst 4 { gravity = 5, life = random(300, 420) }
+    }
+}
+
+// ==============================================
+// 67. 多层时序彩虹波浪｜多delay分层释放
+// ==============================================
+firework {
+    name = "多层时序彩虹波浪"
+    size = 370
+    life = 1420
+    color = #ff4444
+    glitter = medium
+    onDeath {
+        wave 38 (2) { life = 440 }
+        wave 42 (4) { delay = 300, duration = 600, color = gradient(#ff4444, #22aaff) }
+        wave 48 (6) { delay = 600, duration = 700, color = gradient(#22aaff, #ffdd22) }
+        flash(44)
+    }
+}
+
+// ==============================================
+// 68. 银白流束马尾弹｜streamer+horsetail双线
+// ==============================================
+firework {
+    name = "银白流束马尾弹"
+    size = 260
+    life = 1180
+    color = #f8f8ff
+    horsetail = true
+    glitter = streamer
+    streamers = true
+    launchHeight = 0.85
+    onDeath {
+        ring 18 { life = 500 }
+    }
+}
+
+// ==============================================
+// 69. 四特效叠加蓝金花｜四大内置特效全开
+// ==============================================
+firework {
+    name = "四特效叠加蓝金花"
+    size = 350
+    life = 1260
+    color = #2299ff
+    glitter = heavy
+    crossette = true
+    crackle = true
+    floral = true
+    fallingLeaves = true
+    onDeath {
+        burst 13 { speed = random(0.8, 1.4) }
+        flash(41)
+    }
+}
+
+// ==============================================
+// 70. 生日奶油黄礼花｜柔和低饱和配色
+// ==============================================
+firework {
+    name = "生日奶油黄礼花"
+    size = 290
+    life = 960
+    density = 1.0
+    color = #fff2bb
+    secondColor = #ffddcc
+    glitter = light
+    pistil = true
+    pistilColor = #ffffff
+    onDeath {
+        heart 54 { delay = 180 }
+        flash(29)
+    }
+}
+
+// ==============================================
+// 71. 赛博粉紫厚尾环｜thick+strobe科技环
+// ==============================================
+firework {
+    name = "赛博粉紫厚尾环"
+    size = 390
+    life = 1480
+    color = #ff33bb
+    secondColor = #7722ff
+    glitter = thick
+    ring = true
+    strobe = true
+    strobeColor = #ffffff
+    onDeath {
+        spiral 22 (2) { color = gradient(#ff33bb, #7722ff) }
+        flash(49)
+    }
+}
+
+// ==============================================
+// 72. 低空迷你半圆彩拱｜超低空弧形造型
+// ==============================================
+firework {
+    name = "低空迷你半圆彩拱"
+    size = 150
+    life = 620
+    density = 1.35
+    color = [#ff2266, #ffdd00, #22ee66]
+    launchHeight = 0.12
+    gravity = 2.5
+    onDeath {
+        arc 10 (Math.PI) { life = 280 }
+        flash(18)
+    }
+}
+
+// ==============================================
+// 73. 浮动时长蓝螺旋｜lifeVariation大浮动
+// ==============================================
+firework {
+    name = "浮动时长蓝螺旋"
+    size = 320
+    life = 1050
+    lifeVariation = 1.4
+    color = #0088ff
+    glitter = medium
+    onDeath {
+        spiral 18 (2) { life = random(350, 750) }
+        flash(32)
+    }
+}
+
+// ==============================================
+// 74. 纯白大落叶星云｜fallingLeaves主视觉
+// ==============================================
+firework {
+    name = "纯白大落叶星云"
+    size = 330
+    life = 1700
+    density = 0.68
+    color = #ffffff
+    glitter = willow
+    fallingLeaves = true
+    gravity = 1.05
+    fade = 0.6
+    onDeath {
+        burst 8 { speed = 0.6 }
+    }
+}
+
+// ==============================================
+// 75. 橙红十字爆裂弹｜crossette主特效
+// ==============================================
+firework {
+    name = "橙红十字爆裂弹"
+    size = 340
+    life = 940
+    color = #ff5522
+    crossette = true
+    glitter = heavy
+    onDeath {
+        arc 10 (6.283) { life = 460 }
+        flash(31)
+    }
+}
+
+// ==============================================
+// 76. 多色流束长线星云｜streamer多层叠加
+// ==============================================
+firework {
+    name = "多色流束长线星云"
+    size = 360
+    life = 1380
+    color = [#ff6622, #ffdd33, #33dd99, #3388ff]
+    glitter = streamer
+    streamers = true
+    fade = 1.2
+    gravity = 0.75
+    onDeath {
+        wave 40 (4) { life = 640 }
+    }
+}
+
+// ==============================================
+// 77. 极简单动作心形｜onDeath仅heart无多余动作
+// ==============================================
+firework {
+    name = "极简单动作心形"
+    size = 270
+    life = 900
+    color = #ff3366
+    onDeath {
+        heart 58 { life = 500 }
+    }
+}
+
+// ==============================================
+// 78. 超大高空彩虹环｜size上限780高空满铺
+// ==============================================
+firework {
+    name = "超大高空彩虹环"
+    size = 780
+    life = 1750
+    density = 0.58
+    color = [#ff3333, #ffaa22, #ffff33, #33ee66, #22aaff, #9933ff]
+    ring = true
+    pistil = true
+    launchHeight = 1
+    glitter = light
+    onDeath {
+        arc 26 (6.283) { color = gradient(#ff3333, #9933ff), life = 850 }
+        flash(62)
+    }
+}
+
+// ==============================================
+// 79. 淡青噼啪花簇｜crackle+floral双内置
+// ==============================================
+firework {
+    name = "淡青噼啪花簇"
+    size = 310
+    life = 1020
+    color = #77eebb
+    crackle = true
+    floral = true
+    glitter = medium
+    onDeath {
+        burst 10 { life = random(380, 560) }
+    }
+}
+
+// ==============================================
+// 80. 无重力纯白垂柳｜gravity=0悬浮落星
+// ==============================================
+firework {
+    name = "无重力纯白垂柳"
+    size = 260
+    life = 2700
+    density = 0.48
+    color = #ffffff
+    glitter = willow
+    gravity = 0
+    fade = 0.3
+    onDeath {
+        flash(26)
+    }
+}
+
+// ==============================================
+// 81. 婚礼粉紫时序组合｜heart+wave+ring三层延迟
+// ==============================================
+firework {
+    name = "婚礼粉紫时序组合"
+    size = 330
+    life = 1300
+    color = #ff77bb
+    glitter = light
+    onDeath {
+        ring 26 { life = 430 }
+        wave 36 (3) { delay = 250, duration = 550, color = gradient(#ff77bb, #9933ff) }
+        heart 70 { delay = 550, duration = 650, life = 720 }
+        flash(48)
+    }
+}
+
+// ==============================================
+// 82. 黑金重型厚尾礼花｜暗色系高级厚重拖尾
+// ==============================================
+firework {
+    name = "黑金重型厚尾礼花"
+    size = 410
+    life = 1520
+    density = 0.78
+    color = #222222
+    glitter = thick
+    glitterColor = #ffdd22
+    ring = true
+    gravity = 1.0
+    onDeath {
+        spiral 20 (2) { speed = 1.1 }
+        flash(47)
+    }
+}
+
+// ==============================================
+// 83. 低空随机手持彩花｜随机色便携小烟花
+// ==============================================
+firework {
+    name = "低空随机手持彩花"
+    size = 110
+    life = 480
+    density = 1.45
+    color = random
+    launchHeight = 0.09
+    gravity = 2.8
+    onDeath {
+        burst 5 { life = 220 }
+        flash(14)
+    }
+}
+
+// ==============================================
+// 84. 青蓝马尾频闪弹｜horsetail+strobe双特效
+// ==============================================
+firework {
+    name = "青蓝马尾频闪弹"
+    size = 270
+    life = 1220
+    color = #00aaff
+    horsetail = true
+    strobe = true
+    strobeColor = #ffffff
+    glitter = streamer
+    launchHeight = 0.9
+    onDeath {
+        arc 12 (6.283) { life = 520 }
+    }
+}
+
+// ==============================================
+// 85. 渐变橙粉螺旋星云｜gradient螺旋渐变粒子
+// ==============================================
+firework {
+    name = "渐变橙粉螺旋星云"
+    size = 340
+    life = 1360
+    color = #ff8833
+    secondColor = #ff5599
+    glitter = light
+    onDeath {
+        spiral 24 (3) { color = gradient(#ff8833, #ff5599), life = random(600, 820) }
+        flash(43)
+    }
+}
+
+// ==============================================
+// 86. 森系深绿大花簇｜floral高密度花簇
+// ==============================================
+firework {
+    name = "森系深绿大花簇"
+    size = 360
+    life = 1160
+    color = #117733
+    floral = true
+    glitter = heavy
+    pistil = true
+    pistilColor = #88ffaa
+    onDeath {
+        burst 14 { speed = 1.2 }
+        flash(37)
+    }
+}
+
+// ==============================================
+// 87. 满阻力无重力星云｜gravity0+fade2极限物理
+// ==============================================
+firework {
+    name = "满阻力无重力星云"
+    size = 400
+    life = 2100
+    density = 0.65
+    color = [#7733ff, #ff4499]
+    gravity = 0
+    fade = 2
+    glitter = thick
+    onDeath {
+        wave 52 (5) { duration = 950 }
+        arc 22 (6.283) { life = random(700, 1200) }
+        flash(54)
+    }
+}
+
+// ==============================================
+// 88. 金红迷你螺旋手持｜小型螺旋便携款
+// ==============================================
+firework {
+    name = "金红迷你螺旋手持"
+    size = 160
+    life = 680
+    density = 1.25
+    color = #dd2222
+    glitter = light
+    launchHeight = 0.18
+    gravity = 2.3
+    onDeath {
+        spiral 10 (1) { life = 320 }
+        flash(22)
+    }
+}
+
+// ==============================================
+// 89. 纯白花蕊双环礼花｜pistil纯白双层环
+// ==============================================
+firework {
+    name = "纯白花蕊双环礼花"
+    size = 350
+    life = 1080
+    color = #ffdd44
+    ring = true
+    pistil = true
+    pistilColor = #ffffff
+    glitter = medium
+    onDeath {
+        ring 30 { life = 490 }
+        flash(35)
+    }
+}
+
+// ==============================================
+// 90. 赛博霓虹波浪脉冲｜strobe+wave动态闪烁波浪
+// ==============================================
+firework {
+    name = "赛博霓虹波浪脉冲"
+    size = 320
+    life = 1240
+    color = #00ffdd
+    secondColor = #ff00aa
+    strobe = true
+    strobeColor = #ffffff
+    glitter = streamer
+    onDeath {
+        wave 44 (4) { color = gradient(#00ffdd, #ff00aa), duration = 680 }
+        flash(39)
+    }
+}
+
+// ==============================================
+// 91. 高浮动金色流星｜lifeVariation=1.5上限浮动
+// ==============================================
+firework {
+    name = "高浮动金色流星"
+    size = 240
+    life = 1100
+    lifeVariation = 1.5
+    density = 0.58
+    color = #ffc520
+    glitter = willow
+    gravity = 1.25
+    onDeath {
+        burst 6 { life = random(280, 700) }
+    }
+}
+
+// ==============================================
+// 92. 深蓝十字落叶礼花｜crossette+fallingLeaves组合
+// ==============================================
+firework {
+    name = "深蓝十字落叶礼花"
+    size = 330
+    life = 1400
+    color = #112288
+    crossette = true
+    fallingLeaves = true
+    glitter = willow
+    onDeath {
+        arc 9 (6.283) { life = 550 }
+        flash(33)
+    }
+}
+
+// ==============================================
+// 93. 极简半圆单拱｜仅arc半圆无多余粒子
+// ==============================================
+firework {
+    name = "极简半圆单拱"
+    size = 280
+    life = 910
+    color = #33eecc
+    glitter = light
+    onDeath {
+        arc 14 (Math.PI) { life = 450 }
+    }
+}
+
+// ==============================================
+// 94. 生日彩虹多层大压轴｜生日晚会综合款
+// ==============================================
+firework {
+    name = "生日彩虹多层大压轴"
+    size = 720
+    life = 1650
+    density = 0.63
+    color = [#ff4444, #ffbb33, #ffff44, #44ee77, #33aaff, #aa44ff]
+    ring = true
+    pistil = true
+    streamers = true
+    strobe = true
+    strobeColor = #ffffff
+    glitter = heavy
+    onDeath {
+        burst 18 { life = random(500, 900), speed = random(0.7, 1.3) }
+        arc 22 (6.283) { color = gradient(#ff4444, #aa44ff) }
+        spiral 26 (3) { speed = 0.9 }
+        wave 54 (5) { duration = 900 }
+        heart 84 { delay = 450, duration = 750 }
+        flash(65)
+    }
+}
+
+// ==============================================
+// 95. 浅粉薄拖尾星云｜light极低密度柔和款
+// ==============================================
+firework {
+    name = "浅粉薄拖尾星云"
+    size = 310
+    life = 1200
+    density = 0.75
+    color = #ffbbd0
+    glitter = light
+    fade = 0.5
+    gravity = 0.65
+    onDeath {
+        spiral 14 (1) { life = 580 }
+        flash(31)
+    }
+}
+
+// ==============================================
+// 96. 金红升空噼啪弹｜horsetail+crackle升空噼啪
+// ==============================================
+firework {
+    name = "金红升空噼啪弹"
+    size = 290
+    life = 1260
+    color = #ff2222
+    secondColor = #ffdd00
+    horsetail = true
+    crackle = true
+    glitter = medium
+    launchHeight = 0.94
+    onDeath {
+        burst 9 { speed = 0.9 }
+        flash(38)
+    }
+}
+
+// ==============================================
+// 97. 纯渐变波浪无闪光｜onDeath无flash柔和特效
+// ==============================================
+firework {
+    name = "纯渐变波浪无闪光"
+    size = 300
+    life = 1060
+    color = #22bbff
+    glitter = light
+    onDeath {
+        wave 38 (3) { color = gradient(#22bbff, #ff44aa), life = 620, duration = 650 }
+    }
+}

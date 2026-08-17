@@ -1,122 +1,163 @@
 <template>
-  <AppDialog :show="open" :title="t('menu.title')" width="500px" max-height="70vh" @close="$emit('close')">
+  <AppDialog :show="open" :title="t('menu.title')" width="500px" max-height="76vh" @close="$emit('close')">
     <div class="ios-settings">
-      <div class="ios-settings__group">
-        <AppSelect
-          :label="t('menu.shellType')"
-          :model-value="config.shell"
-          :groups="shellGroups"
-          @update:model-value="$emit('update:config', { shell: $event })"
-        />
-      </div>
-      <div class="ios-settings__group">
-        <AppSelect
-          :label="t('menu.shellSize')"
-          :model-value="config.size"
-          :options="sizeOptions"
-          @update:model-value="$emit('update:config', { size: $event })"
-        />
-        <AppSelect
-          :label="t('menu.quality')"
-          :model-value="config.quality"
-          :options="qualityOptions"
-          @update:model-value="$emit('update:config', { quality: $event })"
-        />
-        <AppSelect
-          :label="t('menu.skyLighting')"
-          :model-value="config.skyLighting"
-          :options="skyLightingOptions"
-          @update:model-value="$emit('update:config', { skyLighting: $event })"
-        />
-        <AppSelect
-          :label="t('menu.scale')"
-          :model-value="String(config.scaleFactor)"
-          :options="scaleFactorOptions"
-          @update:model-value="$emit('update:config', { scaleFactor: +$event })"
-        />
-        <AppSelect
-          :label="t('menu.renderer')"
-          :model-value="config.renderer"
-          :options="rendererOptions"
-          @update:model-value="$emit('update:config', { renderer: ($event as 'webgl' | 'canvas2d') })"
-        />
-        <AppSelect
-          :label="t('menu.fps')"
-          :model-value="String(config.fps)"
-          :options="fpsOptions"
-          @update:model-value="$emit('update:config', { fps: +$event })"
-        />
-        <AppSelect
-          :label="t('menu.speed')"
-          :model-value="String(config.speed)"
-          :options="speedOptions"
-          @update:model-value="$emit('update:config', { speed: +$event })"
-        />
-      </div>
-      <div class="ios-settings__group">
-        <AppSwitch
-          :label="t('menu.autoLaunch')"
-          :model-value="config.autoLaunch"
-          @update:model-value="$emit('update:config', { autoLaunch: $event })"
-        />
-        <AppSwitch
-          :label="t('menu.finaleMode')"
-          :model-value="config.finale"
-          @update:model-value="$emit('update:config', { finale: $event })"
-        />
-      </div>
-      <div class="ios-settings__group">
-        <AppSwitch
-          :label="t('menu.hideControls')"
-          :model-value="config.hideControls"
-          @update:model-value="$emit('update:config', { hideControls: $event })"
-        />
-        <AppSwitch
-          :label="t('menu.fullscreen')"
-          :model-value="fullscreen"
-          @update:model-value="$emit('toggle-fullscreen')"
-        />
-        <AppSwitch
-          :label="t('menu.longExposure')"
-          :model-value="config.longExposure"
-          @update:model-value="$emit('update:config', { longExposure: $event })"
-        />
-        <AppSwitch
-          :label="t('menu.debug')"
-          :model-value="config.debug"
-          @update:model-value="$emit('update:config', { debug: $event })"
-        />
-      </div>
-      <div class="ios-settings__group">
-        <div class="ios-settings__row">
-          <span class="ios-settings__row-label">{{ t('menu.loadScript') }}</span>
-          <AppButton variant="link" @click="pickFile">{{ t('menu.selectFile') }}</AppButton>
-        </div>
-        <div class="ios-settings__row">
-          <span class="ios-settings__row-label">{{ t('menu.editScript') }}</span>
-          <AppButton variant="link" @click="goEditor">{{ t('menu.openEditor') }}</AppButton>
+      <!-- 烟花 -->
+      <div class="ios-settings__section">
+        <div class="ios-settings__section-title">{{ t('menu.sectionFirework') }}</div>
+        <div class="ios-settings__group">
+          <AppSelect
+            :label="t('menu.shellType')"
+            :model-value="config.shell"
+            :groups="shellGroups"
+            @update:model-value="$emit('update:config', { shell: $event })"
+          />
+          <AppSelect
+            :label="t('menu.shellSize')"
+            :model-value="config.size"
+            :options="sizeOptions"
+            @update:model-value="$emit('update:config', { size: $event })"
+          />
         </div>
       </div>
-      <div class="ios-settings__group">
-        <AppSelect
-          :label="t('settings.language')"
-          :model-value="locale"
-          :options="localeOptions"
-          @update:model-value="changeLocale"
-        />
+
+      <!-- 显示 -->
+      <div class="ios-settings__section">
+        <div class="ios-settings__section-title">{{ t('menu.sectionDisplay') }}</div>
+        <div class="ios-settings__group">
+          <AppSelect
+            :label="t('menu.quality')"
+            :model-value="config.quality"
+            :options="qualityOptions"
+            @update:model-value="$emit('update:config', { quality: $event })"
+          />
+          <AppSelect
+            :label="t('menu.skyLighting')"
+            :model-value="config.skyLighting"
+            :options="skyLightingOptions"
+            @update:model-value="$emit('update:config', { skyLighting: $event })"
+          />
+          <AppSelect
+            :label="t('menu.scale')"
+            :model-value="String(config.scaleFactor)"
+            :options="scaleFactorOptions"
+            @update:model-value="$emit('update:config', { scaleFactor: +$event })"
+          />
+          <AppSelect
+            :label="t('menu.renderer')"
+            :model-value="config.renderer"
+            :options="rendererOptions"
+            @update:model-value="$emit('update:config', { renderer: ($event as 'webgl' | 'canvas2d') })"
+          />
+          <AppSelect
+            :label="t('menu.fps')"
+            :model-value="String(config.fps)"
+            :options="fpsOptions"
+            @update:model-value="$emit('update:config', { fps: +$event })"
+          />
+          <AppSelect
+            :label="t('menu.speed')"
+            :model-value="String(config.speed)"
+            :options="speedOptions"
+            @update:model-value="$emit('update:config', { speed: +$event })"
+          />
+        </div>
+      </div>
+
+      <!-- 行为 -->
+      <div class="ios-settings__section">
+        <div class="ios-settings__section-title">{{ t('menu.sectionBehavior') }}</div>
+        <div class="ios-settings__group">
+          <AppSwitch
+            :label="t('menu.autoLaunch')"
+            :model-value="config.autoLaunch"
+            @update:model-value="$emit('update:config', { autoLaunch: $event })"
+          />
+          <AppSwitch
+            :label="t('menu.finaleMode')"
+            :model-value="config.finale"
+            @update:model-value="$emit('update:config', { finale: $event })"
+          />
+          <div class="ios-settings__row">
+            <span class="ios-settings__row-label">{{ t('menu.launchPlanEntry') }}</span>
+            <AppButton variant="link" @click="launchPlanOpen = true">{{ t('menu.launchPlanConfigure') }}</AppButton>
+          </div>
+        </div>
+      </div>
+
+      <!-- 界面 -->
+      <div class="ios-settings__section">
+        <div class="ios-settings__section-title">{{ t('menu.sectionInterface') }}</div>
+        <div class="ios-settings__group">
+          <AppSwitch
+            :label="t('menu.hideControls')"
+            :model-value="config.hideControls"
+            @update:model-value="$emit('update:config', { hideControls: $event })"
+          />
+          <AppSwitch
+            :label="t('menu.fullscreen')"
+            :model-value="fullscreen"
+            @update:model-value="$emit('toggle-fullscreen')"
+          />
+          <AppSwitch
+            :label="t('menu.longExposure')"
+            :model-value="config.longExposure"
+            @update:model-value="$emit('update:config', { longExposure: $event })"
+          />
+          <AppSwitch
+            :label="t('menu.debug')"
+            :model-value="config.debug"
+            @update:model-value="$emit('update:config', { debug: $event })"
+          />
+        </div>
+      </div>
+
+      <!-- 脚本 -->
+      <div class="ios-settings__section">
+        <div class="ios-settings__section-title">{{ t('menu.sectionScript') }}</div>
+        <div class="ios-settings__group">
+          <div class="ios-settings__row">
+            <span class="ios-settings__row-label">{{ t('menu.loadScript') }}</span>
+            <AppButton variant="link" @click="pickFile">{{ t('menu.selectFile') }}</AppButton>
+          </div>
+          <div class="ios-settings__row">
+            <span class="ios-settings__row-label">{{ t('menu.editScript') }}</span>
+            <AppButton variant="link" @click="goEditor">{{ t('menu.openEditor') }}</AppButton>
+          </div>
+        </div>
+      </div>
+
+      <!-- 通用 -->
+      <div class="ios-settings__section">
+        <div class="ios-settings__section-title">{{ t('menu.sectionGeneral') }}</div>
+        <div class="ios-settings__group">
+          <AppSelect
+            :label="t('settings.language')"
+            :model-value="locale"
+            :options="localeOptions"
+            @update:model-value="changeLocale"
+          />
+        </div>
       </div>
     </div>
   </AppDialog>
+
+  <LaunchPlanDialog
+    :show="launchPlanOpen"
+    :model-value="config.launchPlan"
+    @update:model-value="$emit('update:config', { launchPlan: $event })"
+    @close="launchPlanOpen = false"
+  />
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n"
 import { useRouter } from "vue-router"
 import AppDialog from "../components/AppDialog.vue"
 import AppSelect from "../components/AppSelect.vue"
 import AppSwitch from "../components/AppSwitch.vue"
 import AppButton from "../components/AppButton.vue"
+import LaunchPlanDialog from "../components/LaunchPlanDialog.vue"
 import {
   shellNames, shellNameMap,
   QUALITY_LOW, QUALITY_NORMAL, QUALITY_HIGH,
@@ -150,6 +191,8 @@ const emit = defineEmits<{
   "load-shell-file": [file: File | undefined]
   close: []
 }>()
+
+const launchPlanOpen = ref(false)
 
 const shellGroups = computed(() => {
   void props.shellRefreshKey
@@ -222,10 +265,27 @@ function pickFile() {
 .ios-settings {
   width: 100%;
 
+  &__section {
+    margin-bottom: 20px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ios-label-secondary);
+    letter-spacing: var(--letter-spacing);
+    text-transform: uppercase;
+    padding: 0 4px;
+    margin-bottom: 8px;
+  }
+
   &__group {
     background: var(--ios-fill-secondary);
     border-radius: var(--ios-radius);
-    margin-bottom: 16px;
     overflow: hidden;
 
     :deep(.ios-select),

@@ -6,10 +6,25 @@ export interface ShellParseError {
   col: number
 }
 
+export interface RandomExpr {
+  kind: "random"
+  min: number
+  max: number
+}
+
+export interface GradientExpr {
+  kind: "gradient"
+  from: string
+  to: string
+}
+
+export type Expr = RandomExpr | GradientExpr
+export type ShellValue = string | number | boolean | string[] | Expr
+
 export interface BurstAction {
   type: "burst"
   count: number
-  options: Record<string, string | number>
+  options: Record<string, ShellValue>
 }
 
 export interface FlashAction {
@@ -21,21 +36,86 @@ export interface ArcAction {
   type: "arc"
   count: number
   arcAngle: number
-  options: Record<string, string | number>
+  options: Record<string, ShellValue>
 }
 
 export interface SpiralAction {
   type: "spiral"
   count: number
   turns: number
-  options: Record<string, string | number>
+  options: Record<string, ShellValue>
 }
 
-export type OnDeathAction = BurstAction | FlashAction | ArcAction | SpiralAction
+export interface RingAction {
+  type: "ring"
+  count: number
+  options: Record<string, ShellValue>
+}
+
+export interface WaveAction {
+  type: "wave"
+  count: number
+  waves: number
+  options: Record<string, ShellValue>
+}
+
+export interface HeartAction {
+  type: "heart"
+  count: number
+  options: Record<string, ShellValue>
+}
+
+// 几何造型类动作：star / cross / snowflake / flower / square / triangle / arrow
+export type ShapeType = "star" | "cross" | "snowflake" | "flower" | "square" | "triangle" | "arrow"
+
+export interface ShapeAction {
+  type: ShapeType
+  count: number
+  // 可选的圆括号参数（如 star 的尖角数、snowflake 的辐条数、flower 的花瓣数）
+  param: number
+  options: Record<string, ShellValue>
+}
+
+export interface RainAction {
+  type: "rain"
+  count: number
+  options: Record<string, ShellValue>
+}
+
+export interface VortexAction {
+  type: "vortex"
+  count: number
+  turns: number
+  options: Record<string, ShellValue>
+}
+
+export interface FountainAction {
+  type: "fountain"
+  count: number
+  options: Record<string, ShellValue>
+}
+
+export interface GalaxyAction {
+  type: "galaxy"
+  count: number
+  arms: number
+  options: Record<string, ShellValue>
+}
+
+export interface TextAction {
+  type: "text"
+  count: number
+  text: string
+  options: Record<string, ShellValue>
+}
+
+export type OnDeathAction =
+  | BurstAction | FlashAction | ArcAction | SpiralAction | RingAction | WaveAction | HeartAction
+  | ShapeAction | RainAction | VortexAction | FountainAction | GalaxyAction | TextAction
 
 export interface ParsedShell {
   name: string
-  props: Record<string, string | number | boolean | string[]>
+  props: Record<string, ShellValue>
   onDeath: OnDeathAction[]
 }
 
@@ -48,7 +128,14 @@ interface Token {
   col: number
 }
 
-const KEYWORDS = new Set(["firework", "onDeath", "burst", "flash", "arc", "spiral", "true", "false", "random", "inherit"])
+const KEYWORDS = new Set([
+  "firework", "onDeath", "burst", "flash", "arc", "spiral", "true", "false", "random", "inherit",
+  "star", "cross", "snowflake", "flower", "square", "triangle", "arrow",
+  "rain", "vortex", "fountain", "galaxy", "text",
+])
+
+// 全部 onDeath 动作名，用于错误信息中的动作列表。
+const ACTION_NAMES = "burst, flash, arc, spiral, ring, wave, heart, star, cross, snowflake, flower, square, triangle, arrow, rain, vortex, fountain, galaxy, text"
 
 const KNOWN_PROPS = new Set([
   "name", "size", "life", "lifeVariation", "density", "starCount",
@@ -57,7 +144,7 @@ const KNOWN_PROPS = new Set([
   "pistil", "pistilColor", "streamers",
   "crossette", "crackle", "floral", "fallingLeaves",
   "gravity", "fade", "launchHeight",
-  "speed", // burst/arc action option
+  "speed", "delay", "duration", // action options
 ])
 
 const GLITTER_VALUES = new Set(["light", "medium", "heavy", "thick", "streamer", "willow"])
@@ -90,6 +177,10 @@ const NUMERIC_PROPS = new Set(Object.keys(PROP_RANGES))
 const ACTION_OPTION_RANGES: Record<string, [number, number]> = {
   life: [100, 3000],
   speed: [0.1, 5],
+  gravity: [0, 5],
+  fade: [0, 2],
+  delay: [0, 5000],
+  duration: [0, 5000],
 }
 
 function validateRange(label: string, value: number, [min, max]: [number, number], line: number, col: number): ShellParseError | null {
@@ -279,7 +370,7 @@ class Parser {
   }
 
   private parseFireworkBody(): ParsedShell {
-    const props: Record<string, string | number | boolean | string[]> = {}
+    const props: Record<string, ShellValue> = {}
     const onDeath: OnDeathAction[] = []
 
     while (this.peek() && this.peek()!.value !== "}") {
@@ -293,7 +384,7 @@ class Parser {
     return { name: String(props.name || ""), props, onDeath }
   }
 
-  private parseProperty(props: Record<string, string | number | boolean | string[]>): void {
+  private parseProperty(props: Record<string, ShellValue>): void {
     const keyTok = this.require("keyword")
     const key = keyTok.value
 
@@ -317,8 +408,8 @@ class Parser {
             this.errors.push({ message: `"color" array element must be hex (e.g. #ff0043), got "${c}"`, line: keyTok.line, col: keyTok.col })
           }
         }
-      } else if (value !== "random" && !isHexColor(value)) {
-        this.errors.push({ message: `"color" expects random, a hex color, or an array of hex colors, got "${value}"`, line: keyTok.line, col: keyTok.col })
+      } else if (value !== "random" && value !== "none" && !isHexColor(value)) {
+        this.errors.push({ message: `"color" expects random, none, a hex color, or an array of hex colors, got "${value}"`, line: keyTok.line, col: keyTok.col })
       }
     } else if (COLOR_HEX_ONLY.has(key)) {
       // secondColor / glitterColor / strobeColor / pistilColor only support hex
@@ -349,7 +440,7 @@ class Parser {
     props[key] = value
   }
 
-  private parseValue(): string | number | boolean | string[] {
+  private parseValue(): ShellValue {
     const t = this.peek()
     if (!t) { throw new Error("unexpected EOF") }
 
@@ -364,6 +455,11 @@ class Parser {
       }
       this.require("symbol", "]")
       return colors
+    }
+
+    // Function call: random(a, b) | gradient(c1, c2)
+    if ((t.value === "random" || t.value === "gradient") && this.tokens[this.pos + 1]?.value === "(") {
+      return this.parseExpr()
     }
 
     if (t.type === "number") { this.advance(); return parseFloat(t.value) }
@@ -381,6 +477,35 @@ class Parser {
     throw new Error("parse error")
   }
 
+  private parseExpr(): Expr {
+    const nameTok = this.advance()!
+    this.require("symbol", "(")
+    if (nameTok.value === "random") {
+      const minTok = this.require("number")
+      this.require("symbol", ",")
+      const maxTok = this.require("number")
+      this.require("symbol", ")")
+      const min = parseFloat(minTok.value)
+      const max = parseFloat(maxTok.value)
+      if (max < min) {
+        this.errors.push({ message: `random() max (${max}) must be >= min (${min})`, line: minTok.line, col: minTok.col })
+      }
+      return { kind: "random", min, max }
+    }
+    // gradient(c1, c2)
+    const fromTok = this.require("string")
+    this.require("symbol", ",")
+    const toTok = this.require("string")
+    this.require("symbol", ")")
+    if (!isHexColor(fromTok.value)) {
+      this.errors.push({ message: `gradient() first color must be hex (e.g. #ff0043), got "${fromTok.value}"`, line: fromTok.line, col: fromTok.col })
+    }
+    if (!isHexColor(toTok.value)) {
+      this.errors.push({ message: `gradient() second color must be hex (e.g. #1e7fff), got "${toTok.value}"`, line: toTok.line, col: toTok.col })
+    }
+    return { kind: "gradient", from: fromTok.value, to: toTok.value }
+  }
+
   private parseOnDeathBlock(): OnDeathAction[] {
     const braceTok = this.peek()
     this.require("symbol", "{")
@@ -392,7 +517,7 @@ class Parser {
     this.require("symbol", "}")
     // 完整性校验：onDeath 块至少需要一个动作
     if (actions.length === 0 && braceTok) {
-      this.errors.push({ message: `onDeath block is empty, add at least one action (burst, flash, arc)`, line: braceTok.line, col: braceTok.col })
+      this.errors.push({ message: `onDeath block is empty, add at least one action (${ACTION_NAMES})`, line: braceTok.line, col: braceTok.col })
     }
     return actions
   }
@@ -406,8 +531,24 @@ class Parser {
       case "flash": return this.parseFlash()
       case "arc": return this.parseArc()
       case "spiral": return this.parseSpiral()
+      case "ring": return this.parseRing()
+      case "wave": return this.parseWave()
+      case "heart": return this.parseHeart()
+      case "star":
+      case "cross":
+      case "snowflake":
+      case "flower":
+      case "square":
+      case "triangle":
+      case "arrow":
+        return this.parseShape(t.value)
+      case "rain": return this.parseRain()
+      case "vortex": return this.parseVortex()
+      case "fountain": return this.parseFountain()
+      case "galaxy": return this.parseGalaxy()
+      case "text": return this.parseText()
       default: {
-        this.errors.push({ message: `Unknown action "${t.value}", allowed: burst, flash, arc, spiral`, line: t.line, col: t.col })
+        this.errors.push({ message: `Unknown action "${t.value}", allowed: ${ACTION_NAMES}`, line: t.line, col: t.col })
         this.advance()
         return null
       }
@@ -423,7 +564,7 @@ class Parser {
     } else if (count > 50) {
       this.errors.push({ message: `burst count too high (${count}), recommended 1-50`, line: countTok.line, col: countTok.col })
     }
-    const options: Record<string, string | number> = {}
+    const options: Record<string, ShellValue> = {}
     if (this.peek()?.value === "{") {
       this.advance()
       this.parseOptionsBlock(options)
@@ -470,7 +611,7 @@ class Parser {
       }
       this.require("symbol", ")")
     }
-    const options: Record<string, string | number> = {}
+    const options: Record<string, ShellValue> = {}
     if (this.peek()?.value === "{") {
       this.advance()
       this.parseOptionsBlock(options)
@@ -498,7 +639,7 @@ class Parser {
       }
       this.require("symbol", ")")
     }
-    const options: Record<string, string | number> = {}
+    const options: Record<string, ShellValue> = {}
     if (this.peek()?.value === "{") {
       this.advance()
       this.parseOptionsBlock(options)
@@ -507,7 +648,185 @@ class Parser {
     return { type: "spiral", count, turns, options }
   }
 
-  private parseOptionsBlock(options: Record<string, string | number | boolean | string[]>): void {
+  private parseRing(): RingAction {
+    this.advance() // "ring"
+    const countTok = this.require("number")
+    const count = parseFloat(countTok.value)
+    if (count <= 0) {
+      this.errors.push({ message: `ring count must be positive, got ${count}`, line: countTok.line, col: countTok.col })
+    } else if (count > 200) {
+      this.errors.push({ message: `ring count too high (${count}), recommended 1-200`, line: countTok.line, col: countTok.col })
+    }
+    const options: Record<string, ShellValue> = {}
+    if (this.peek()?.value === "{") {
+      this.advance()
+      this.parseOptionsBlock(options)
+      this.require("symbol", "}")
+    }
+    return { type: "ring", count, options }
+  }
+
+  private parseWave(): WaveAction {
+    this.advance() // "wave"
+    const countTok = this.require("number")
+    const count = parseFloat(countTok.value)
+    if (count <= 0) {
+      this.errors.push({ message: `wave count must be positive, got ${count}`, line: countTok.line, col: countTok.col })
+    } else if (count > 200) {
+      this.errors.push({ message: `wave count too high (${count}), recommended 1-200`, line: countTok.line, col: countTok.col })
+    }
+    let waves = 2
+    if (this.peek()?.value === "(") {
+      this.advance()
+      const wavesTok = this.require("number")
+      waves = parseFloat(wavesTok.value)
+      if (waves <= 0 || waves > 10) {
+        this.errors.push({ message: `wave waves must be in range (0, 10], got ${waves}`, line: wavesTok.line, col: wavesTok.col })
+      }
+      this.require("symbol", ")")
+    }
+    const options: Record<string, ShellValue> = {}
+    if (this.peek()?.value === "{") {
+      this.advance()
+      this.parseOptionsBlock(options)
+      this.require("symbol", "}")
+    }
+    return { type: "wave", count, waves, options }
+  }
+
+  private parseHeart(): HeartAction {
+    this.advance() // "heart"
+    const countTok = this.require("number")
+    const count = parseFloat(countTok.value)
+    if (count <= 0) {
+      this.errors.push({ message: `heart count must be positive, got ${count}`, line: countTok.line, col: countTok.col })
+    } else if (count > 200) {
+      this.errors.push({ message: `heart count too high (${count}), recommended 1-200`, line: countTok.line, col: countTok.col })
+    }
+    const options: Record<string, ShellValue> = {}
+    if (this.peek()?.value === "{") {
+      this.advance()
+      this.parseOptionsBlock(options)
+      this.require("symbol", "}")
+    }
+    return { type: "heart", count, options }
+  }
+
+  // 通用：读取动作的 count 并校验正数 / 上限。
+  private parseSimpleCount(label: string, max: number): number {
+    const countTok = this.require("number")
+    const count = parseFloat(countTok.value)
+    if (count <= 0) {
+      this.errors.push({ message: `${label} count must be positive, got ${count}`, line: countTok.line, col: countTok.col })
+    } else if (count > max) {
+      this.errors.push({ message: `${label} count too high (${count}), recommended 1-${max}`, line: countTok.line, col: countTok.col })
+    }
+    return count
+  }
+
+  // 通用：读取可选的 { ... } 选项块。
+  private parseOptionalOptions(): Record<string, ShellValue> {
+    const options: Record<string, ShellValue> = {}
+    if (this.peek()?.value === "{") {
+      this.advance()
+      this.parseOptionsBlock(options)
+      this.require("symbol", "}")
+    }
+    return options
+  }
+
+  private parseShape(type: ShapeType): ShapeAction {
+    this.advance() // 动作关键字
+    const count = this.parseSimpleCount(type, 200)
+
+    // 仅部分造型动作支持圆括号数值参数。
+    const specs: Partial<Record<ShapeType, { def: number; min: number; max: number; name: string }>> = {
+      star: { def: 5, min: 3, max: 16, name: "points" },
+      snowflake: { def: 6, min: 3, max: 12, name: "spokes" },
+      flower: { def: 6, min: 3, max: 16, name: "petals" },
+    }
+    const spec = specs[type]
+    let param = 0
+    if (spec) {
+      param = spec.def
+      if (this.peek()?.value === "(") {
+        this.advance()
+        const paramTok = this.require("number")
+        param = parseFloat(paramTok.value)
+        if (param < spec.min || param > spec.max) {
+          this.errors.push({ message: `${type} ${spec.name} must be in range [${spec.min}, ${spec.max}], got ${param}`, line: paramTok.line, col: paramTok.col })
+        }
+        this.require("symbol", ")")
+      }
+    }
+
+    const options = this.parseOptionalOptions()
+    return { type, count, param, options }
+  }
+
+  private parseRain(): RainAction {
+    this.advance() // "rain"
+    const count = this.parseSimpleCount("rain", 200)
+    const options = this.parseOptionalOptions()
+    return { type: "rain", count, options }
+  }
+
+  private parseVortex(): VortexAction {
+    this.advance() // "vortex"
+    const count = this.parseSimpleCount("vortex", 200)
+    let turns = 2
+    if (this.peek()?.value === "(") {
+      this.advance()
+      const turnsTok = this.require("number")
+      turns = parseFloat(turnsTok.value)
+      if (turns <= 0 || turns > 10) {
+        this.errors.push({ message: `vortex turns must be in range (0, 10], got ${turns}`, line: turnsTok.line, col: turnsTok.col })
+      }
+      this.require("symbol", ")")
+    }
+    const options = this.parseOptionalOptions()
+    return { type: "vortex", count, turns, options }
+  }
+
+  private parseFountain(): FountainAction {
+    this.advance() // "fountain"
+    const count = this.parseSimpleCount("fountain", 200)
+    const options = this.parseOptionalOptions()
+    return { type: "fountain", count, options }
+  }
+
+  private parseGalaxy(): GalaxyAction {
+    this.advance() // "galaxy"
+    const count = this.parseSimpleCount("galaxy", 300)
+    let arms = 2
+    if (this.peek()?.value === "(") {
+      this.advance()
+      const armsTok = this.require("number")
+      arms = parseFloat(armsTok.value)
+      if (arms < 1 || arms > 6) {
+        this.errors.push({ message: `galaxy arms must be in range [1, 6], got ${arms}`, line: armsTok.line, col: armsTok.col })
+      }
+      this.require("symbol", ")")
+    }
+    const options = this.parseOptionalOptions()
+    return { type: "galaxy", count, arms, options }
+  }
+
+  private parseText(): TextAction {
+    this.advance() // "text"
+    const count = this.parseSimpleCount("text", 400)
+    let text = ""
+    if (this.peek()?.value === "(") {
+      this.advance()
+      const textTok = this.require("string")
+      text = textTok.value
+      this.require("symbol", ")")
+    }
+    const options = this.parseOptionalOptions()
+    return { type: "text", count, text, options }
+  }
+
+  private parseOptionsBlock(options: Record<string, ShellValue>): void {
     while (this.peek() && this.peek()!.value !== "}") {
       const keyTok = this.require("keyword")
       this.require("symbol", "=")
