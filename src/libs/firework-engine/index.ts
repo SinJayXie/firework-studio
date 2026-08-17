@@ -15,8 +15,8 @@ export { parseShellScript } from "./shell/shell-parser"
 export type { ParsedShell, ShellParseError } from "./shell/shell-parser"
 export { loadShellScript } from "./shell/shell-loader"
 export type { ShellLoadResult } from "./shell/shell-loader"
-export { listBundledShells } from "./shell/bundled-shells"
-export type { BundledShell } from "./shell/bundled-shells"
+export { scanShellDirectory } from "./shell/shell-scanner"
+export type { BundledShell } from "./shell/shell-scanner"
 export {
   GRAVITY, PI_2, PI_HALF,
   QUALITY_LOW, QUALITY_NORMAL, QUALITY_HIGH,

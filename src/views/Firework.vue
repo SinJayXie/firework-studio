@@ -43,7 +43,7 @@
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick } from "vue"
 import { useI18n } from "vue-i18n"
 import {
-  Firework, shellNames, loadShellScript, listBundledShells,
+  Firework, shellNames, loadShellScript, scanShellDirectory,
   MAX_WIDTH, MAX_HEIGHT, DEFAULT_LAUNCH_PLAN,
 } from "../libs/firework-engine"
 import type { EngineConfig } from "../libs/firework-engine"
@@ -216,9 +216,9 @@ function loadShellFile(file?: File) {
   reader.readAsText(file)
 }
 
-// 自动加载 shell-script 目录下打包的所有 .shell 脚本（重名后加载者覆盖）。
-function loadBundledShells() {
-  const files = listBundledShells()
+// 运行时扫描 shell 目录下的所有 .shell 脚本（重名后加载者覆盖）。
+async function loadShellDirectory() {
+  const files = await scanShellDirectory()
   if (!files.length) return
 
   let loadedCount = 0
@@ -285,7 +285,7 @@ function handleKeydown(e: KeyboardEvent) {
 
 onMounted(async () => {
   engine.init()
-  loadBundledShells()
+  await loadShellDirectory()
 
   const { w, h } = computeStageSize()
   stageWidth.value = w

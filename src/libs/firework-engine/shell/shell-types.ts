@@ -31,7 +31,7 @@ export interface ShellOptions {
 
 export type ShellFactory = (size?: number, fw?: Firework) => ShellOptions
 
-// 内置烟花已迁移到 shell-script/*.shell，运行时自动加载注册。
+// 内置烟花已迁移到 shell/*.shell，运行时扫描自动加载注册。
 // 这里仅保留 Random 占位，实际逻辑由 Firework 构造时覆盖为「随机选择已加载烟花」。
 export const shellTypes: Record<string, ShellFactory> = {
   Random: () => ({}) as ShellOptions,

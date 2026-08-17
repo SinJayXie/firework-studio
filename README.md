@@ -30,7 +30,7 @@ firework-studio/
 │   ├── router/               # 路由
 │   └── views/                # 页面视图
 ├── src-tauri/                # Tauri / Rust 后端
-├── shell-script/             # firework.shell 示例脚本
+├── shell/                    # firework.shell 脚本（运行时扫描）
 ├── firework.shell            # 默认烟花定义
 └── SYNTAX.md                 # firework.shell 语法参考
 ```
